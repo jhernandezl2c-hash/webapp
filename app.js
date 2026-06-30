@@ -11,12 +11,15 @@ function loadPlayer() {
     iframe.allow = "autoplay; encrypted-media; picture-in-picture; fullscreen";
     iframe.allowFullscreen = true;
     iframe.scrolling = "no";
-    // Bloquea pop-ups/redirecciones que algunos embeds inyectan al hacer click.
-    // No incluye allow-popups ni allow-top-navigation a propósito.
-    iframe.setAttribute(
-      'sandbox',
-      'allow-scripts allow-same-origin allow-presentation allow-forms'
-    );
+    // Si el embed se niega a reproducir con sandbox activo, pon
+    // BLOCK_POPUPS = false en config.js para quitarlo (recuperas el
+    // video pero también vuelven los pop-ups del sitio).
+    if (typeof BLOCK_POPUPS === 'undefined' || BLOCK_POPUPS) {
+      iframe.setAttribute(
+        'sandbox',
+        'allow-scripts allow-same-origin allow-presentation allow-forms'
+      );
+    }
     frame.innerHTML = "";
     frame.appendChild(iframe);
     empty.style.display = "none";
