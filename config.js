@@ -14,4 +14,4 @@ const IS_LIVE = false;
 // Bloquea pop-ups del embed (recomendado). Si el video no carga con
 // esto en true, cámbialo a false — el video volverá pero también
 // los pop-ups del sitio.
-const BLOCK_POPUPS = true;
+const BLOCK_POPUPS = false;
