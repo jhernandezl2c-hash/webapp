@@ -3,7 +3,7 @@
 // Ejemplo: "https://ejemplo.com/embed/canal"
 // Déjalo como cadena vacía "" si todavía no tienes uno.
 
-const EMBED_SRC = "<iframe src="https://vileembeds.pages.dev/embed/telemundo-usa" width="100%" height="100%" frameborder="0" scrolling="no" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen></iframe>";
+const EMBED_SRC = "https://vileembeds.pages.dev/embed/telemundo-usa" width="100%" height="100%" frameborder="0" scrolling="no" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen></iframe>";
 
 // Nombre del partido o canal que se muestra arriba del reproductor
 const EMBED_LABEL = "Sin transmisión activa";
