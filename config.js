@@ -4,7 +4,7 @@
 // Déjalo como cadena vacía "" si todavía no tienes uno.
 
 
-const EMBED_SRC = "https://vileembeds.pages.dev/embed/telemundo-usa";
+const EMBED_SRC = "https://vileembeds.pages.dev/embed/fox4k-usa";
 
 // Nombre del partido o canal que se muestra arriba del reproductor
 const EMBED_LABEL = "Sin transmisión activa";
