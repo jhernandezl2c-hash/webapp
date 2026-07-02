@@ -26,57 +26,57 @@ const { useState } = React;
 // ── 46 canales verificados — URLs exactas de vileembeds ──────────
 const INITIAL_CHANNELS = [
   // BROADCAST
-  {id:1,  name:"ABC",                 cat:"Broadcast",       color:"#000000", url:"https://vileembeds.pages.dev/embed/abc"},
-  {id:2,  name:"CBS",                 cat:"Broadcast",       color:"#0033a0", url:"https://vileembeds.pages.dev/embed/cbs"},
-  {id:3,  name:"FOX",                 cat:"Broadcast",       color:"#003366", url:"https://vileembeds.pages.dev/embed/fox"},
-  {id:4,  name:"NBC",                 cat:"Broadcast",       color:"#f4b400", url:"https://vileembeds.pages.dev/embed/nbc"},
-  {id:5,  name:"Telemundo",           cat:"Broadcast",       color:"#cc0000", url:"https://vileembeds.pages.dev/embed/telemundo"},
+  {id:1,  name:"ABC",                 cat:"Broadcast",       color:"#000000", url:"/api/watch?c=abc"},
+  {id:2,  name:"CBS",                 cat:"Broadcast",       color:"#0033a0", url:"/api/watch?c=cbs"},
+  {id:3,  name:"FOX",                 cat:"Broadcast",       color:"#003366", url:"/api/watch?c=fox"},
+  {id:4,  name:"NBC",                 cat:"Broadcast",       color:"#f4b400", url:"/api/watch?c=nbc"},
+  {id:5,  name:"Telemundo",           cat:"Broadcast",       color:"#cc0000", url:"/api/watch?c=telemundo"},
   // DEPORTES
-  {id:6,  name:"ESPN",                cat:"Deportes",        color:"#cc0000", url:"https://vileembeds.pages.dev/embed/espn"},
-  {id:7,  name:"ESPN2",               cat:"Deportes",        color:"#cc0000", url:"https://vileembeds.pages.dev/embed/espn2"},
-  {id:8,  name:"ESPN Deportes",       cat:"Deportes",        color:"#cc0000", url:"https://vileembeds.pages.dev/embed/espn-deportes"},
-  {id:9,  name:"ESPNews",             cat:"Deportes",        color:"#cc0000", url:"https://vileembeds.pages.dev/embed/espnews"},
-  {id:10, name:"ESPNU",               cat:"Deportes",        color:"#cc0000", url:"https://vileembeds.pages.dev/embed/espnu"},
-  {id:11, name:"FS1",                 cat:"Deportes",        color:"#003087", url:"https://vileembeds.pages.dev/embed/fox-sports-1"},
-  {id:12, name:"FS2",                 cat:"Deportes",        color:"#003087", url:"https://vileembeds.pages.dev/embed/fox-sports-2"},
-  {id:13, name:"CBS Sports",          cat:"Deportes",        color:"#003087", url:"https://vileembeds.pages.dev/embed/cbs-sports-network"},
-  {id:14, name:"ACC Network",         cat:"Deportes",        color:"#002d62", url:"https://vileembeds.pages.dev/embed/acc-network"},
-  {id:15, name:"Golf Channel",        cat:"Deportes",        color:"#006341", url:"https://vileembeds.pages.dev/embed/golf-channel"},
-  {id:16, name:"Tennis Channel",      cat:"Deportes",        color:"#00843d", url:"https://vileembeds.pages.dev/embed/tennis-channel"},
-  {id:17, name:"TUDN",                cat:"Deportes",        color:"#00529b", url:"https://vileembeds.pages.dev/embed/tudn"},
-  {id:18, name:"TyC Sports",          cat:"Deportes",        color:"#1a5276", url:"https://vileembeds.pages.dev/embed/tyc-sports-internacional"},
-  {id:19, name:"NBC Sports Bay Area", cat:"Deportes",        color:"#f4b400", url:"https://vileembeds.pages.dev/embed/nbc-sports-bay-area"},
-  {id:20, name:"NBC Sports Philly",   cat:"Deportes",        color:"#f4b400", url:"https://vileembeds.pages.dev/embed/nbc-sports-philadelphia"},
-  {id:21, name:"Sky Sports F1",       cat:"Deportes",        color:"#e4002b", url:"https://vileembeds.pages.dev/embed/sky-sports-f1"},
-  {id:22, name:"DAZN 1",              cat:"Deportes",        color:"#b8ff00", url:"https://vileembeds.pages.dev/embed/dazn-1-usa"},
-  {id:23, name:"DAZN F1",             cat:"Deportes",        color:"#b8ff00", url:"https://vileembeds.pages.dev/embed/dazn-f1"},
-  {id:24, name:"TNT Sports 1",        cat:"Deportes",        color:"#0057b8", url:"https://vileembeds.pages.dev/embed/tnt-sports-1"},
-  {id:25, name:"TNT Sports 2",        cat:"Deportes",        color:"#0057b8", url:"https://vileembeds.pages.dev/embed/tnt-sports-2"},
-  {id:26, name:"TNT Sports 3",        cat:"Deportes",        color:"#0057b8", url:"https://vileembeds.pages.dev/embed/tnt-sports-3"},
-  {id:27, name:"TNT Sports 4",        cat:"Deportes",        color:"#0057b8", url:"https://vileembeds.pages.dev/embed/tnt-sports-4"},
+  {id:6,  name:"ESPN",                cat:"Deportes",        color:"#cc0000", url:"/api/watch?c=espn"},
+  {id:7,  name:"ESPN2",               cat:"Deportes",        color:"#cc0000", url:"/api/watch?c=espn2"},
+  {id:8,  name:"ESPN Deportes",       cat:"Deportes",        color:"#cc0000", url:"/api/watch?c=espn-deportes"},
+  {id:9,  name:"ESPNews",             cat:"Deportes",        color:"#cc0000", url:"/api/watch?c=espnews"},
+  {id:10, name:"ESPNU",               cat:"Deportes",        color:"#cc0000", url:"/api/watch?c=espnu"},
+  {id:11, name:"FS1",                 cat:"Deportes",        color:"#003087", url:"/api/watch?c=fox-sports-1"},
+  {id:12, name:"FS2",                 cat:"Deportes",        color:"#003087", url:"/api/watch?c=fox-sports-2"},
+  {id:13, name:"CBS Sports",          cat:"Deportes",        color:"#003087", url:"/api/watch?c=cbs-sports-network"},
+  {id:14, name:"ACC Network",         cat:"Deportes",        color:"#002d62", url:"/api/watch?c=acc-network"},
+  {id:15, name:"Golf Channel",        cat:"Deportes",        color:"#006341", url:"/api/watch?c=golf-channel"},
+  {id:16, name:"Tennis Channel",      cat:"Deportes",        color:"#00843d", url:"/api/watch?c=tennis-channel"},
+  {id:17, name:"TUDN",                cat:"Deportes",        color:"#00529b", url:"/api/watch?c=tudn"},
+  {id:18, name:"TyC Sports",          cat:"Deportes",        color:"#1a5276", url:"/api/watch?c=tyc-sports-internacional"},
+  {id:19, name:"NBC Sports Bay Area", cat:"Deportes",        color:"#f4b400", url:"/api/watch?c=nbc-sports-bay-area"},
+  {id:20, name:"NBC Sports Philly",   cat:"Deportes",        color:"#f4b400", url:"/api/watch?c=nbc-sports-philadelphia"},
+  {id:21, name:"Sky Sports F1",       cat:"Deportes",        color:"#e4002b", url:"/api/watch?c=sky-sports-f1"},
+  {id:22, name:"DAZN 1",              cat:"Deportes",        color:"#b8ff00", url:"/api/watch?c=dazn-1-usa"},
+  {id:23, name:"DAZN F1",             cat:"Deportes",        color:"#b8ff00", url:"/api/watch?c=dazn-f1"},
+  {id:24, name:"TNT Sports 1",        cat:"Deportes",        color:"#0057b8", url:"/api/watch?c=tnt-sports-1"},
+  {id:25, name:"TNT Sports 2",        cat:"Deportes",        color:"#0057b8", url:"/api/watch?c=tnt-sports-2"},
+  {id:26, name:"TNT Sports 3",        cat:"Deportes",        color:"#0057b8", url:"/api/watch?c=tnt-sports-3"},
+  {id:27, name:"TNT Sports 4",        cat:"Deportes",        color:"#0057b8", url:"/api/watch?c=tnt-sports-4"},
   // ENTRETENIMIENTO
-  {id:28, name:"TBS",                 cat:"Entretenimiento", color:"#00adef", url:"https://vileembeds.pages.dev/embed/tbs"},
-  {id:29, name:"TNT",                 cat:"Entretenimiento", color:"#00adef", url:"https://vileembeds.pages.dev/embed/tnt"},
-  {id:30, name:"AMC",                 cat:"Entretenimiento", color:"#555555", url:"https://vileembeds.pages.dev/embed/amc"},
-  {id:31, name:"USA Network",         cat:"Entretenimiento", color:"#0033a0", url:"https://vileembeds.pages.dev/embed/usa-network"},
-  {id:32, name:"Bravo",               cat:"Entretenimiento", color:"#9b59b6", url:"https://vileembeds.pages.dev/embed/bravo"},
-  {id:33, name:"A&E",                 cat:"Entretenimiento", color:"#3a3a6e", url:"https://vileembeds.pages.dev/embed/ae-network"},
-  {id:34, name:"BBC America",         cat:"Entretenimiento", color:"#c8102e", url:"https://vileembeds.pages.dev/embed/bbc-america"},
-  {id:35, name:"AXS TV",              cat:"Entretenimiento", color:"#e8000d", url:"https://vileembeds.pages.dev/embed/axs-tv"},
+  {id:28, name:"TBS",                 cat:"Entretenimiento", color:"#00adef", url:"/api/watch?c=tbs"},
+  {id:29, name:"TNT",                 cat:"Entretenimiento", color:"#00adef", url:"/api/watch?c=tnt"},
+  {id:30, name:"AMC",                 cat:"Entretenimiento", color:"#555555", url:"/api/watch?c=amc"},
+  {id:31, name:"USA Network",         cat:"Entretenimiento", color:"#0033a0", url:"/api/watch?c=usa-network"},
+  {id:32, name:"Bravo",               cat:"Entretenimiento", color:"#9b59b6", url:"/api/watch?c=bravo"},
+  {id:33, name:"A&E",                 cat:"Entretenimiento", color:"#3a3a6e", url:"/api/watch?c=ae-network"},
+  {id:34, name:"BBC America",         cat:"Entretenimiento", color:"#c8102e", url:"/api/watch?c=bbc-america"},
+  {id:35, name:"AXS TV",              cat:"Entretenimiento", color:"#e8000d", url:"/api/watch?c=axs-tv"},
   // DOCUMENTALES
-  {id:36, name:"AHC",                 cat:"Documentales",    color:"#8b0000", url:"https://vileembeds.pages.dev/embed/american-heroes-channel"},
-  {id:37, name:"Animal Planet",       cat:"Documentales",    color:"#76b900", url:"https://vileembeds.pages.dev/embed/animal-planet"},
+  {id:36, name:"AHC",                 cat:"Documentales",    color:"#8b0000", url:"/api/watch?c=american-heroes-channel"},
+  {id:37, name:"Animal Planet",       cat:"Documentales",    color:"#76b900", url:"/api/watch?c=animal-planet"},
   // FAMILIA
-  {id:38, name:"Disney Channel",      cat:"Familia",         color:"#006ab3", url:"https://vileembeds.pages.dev/embed/disney-channel"},
-  {id:39, name:"Disney Jr.",          cat:"Familia",         color:"#e40046", url:"https://vileembeds.pages.dev/embed/disney-junior"},
-  {id:40, name:"Disney XD",           cat:"Familia",         color:"#006ab3", url:"https://vileembeds.pages.dev/embed/disney-xd"},
-  {id:41, name:"Cartoon Network",     cat:"Familia",         color:"#333333", url:"https://vileembeds.pages.dev/embed/cartoon-network"},
-  {id:42, name:"Nickelodeon",         cat:"Familia",         color:"#ff6e00", url:"https://vileembeds.pages.dev/embed/nickelodeon"},
-  {id:43, name:"Nick Jr.",            cat:"Familia",         color:"#dd5500", url:"https://vileembeds.pages.dev/embed/nick-jr"},
-  {id:44, name:"Nicktoons",           cat:"Familia",         color:"#ff6e00", url:"https://vileembeds.pages.dev/embed/nicktoons"},
-  {id:45, name:"TeenNick",            cat:"Familia",         color:"#aa00ff", url:"https://vileembeds.pages.dev/embed/teenick"},
+  {id:38, name:"Disney Channel",      cat:"Familia",         color:"#006ab3", url:"/api/watch?c=disney-channel"},
+  {id:39, name:"Disney Jr.",          cat:"Familia",         color:"#e40046", url:"/api/watch?c=disney-junior"},
+  {id:40, name:"Disney XD",           cat:"Familia",         color:"#006ab3", url:"/api/watch?c=disney-xd"},
+  {id:41, name:"Cartoon Network",     cat:"Familia",         color:"#333333", url:"/api/watch?c=cartoon-network"},
+  {id:42, name:"Nickelodeon",         cat:"Familia",         color:"#ff6e00", url:"/api/watch?c=nickelodeon"},
+  {id:43, name:"Nick Jr.",            cat:"Familia",         color:"#dd5500", url:"/api/watch?c=nick-jr"},
+  {id:44, name:"Nicktoons",           cat:"Familia",         color:"#ff6e00", url:"/api/watch?c=nicktoons"},
+  {id:45, name:"TeenNick",            cat:"Familia",         color:"#aa00ff", url:"/api/watch?c=teenick"},
   // MÚSICA
-  {id:46, name:"MTV",                 cat:"Música",          color:"#c8c800", url:"https://vileembeds.pages.dev/embed/mtv"},
+  {id:46, name:"MTV",                 cat:"Música",          color:"#c8c800", url:"/api/watch?c=mtv"},
 ].map(ch => ({ ...ch, num: String(ch.id).padStart(2,"0") }));
 
 const PALETTE = ["#c8102e","#f26622","#0057b8","#1f4ba5","#a855f7","#6d28d9","#1db954","#00b8d9","#ff6a00","#e30613","#0e7490","#be185d"];
@@ -98,7 +98,7 @@ function AddModal({ onAdd, onClose, total }) {
         <div><label style={lbl}>Nombre</label><input style={inp} value={form.name} onChange={e=>set("name",e.target.value)} placeholder="ej. ESPN Deportes"/></div>
         <div>
           <label style={lbl}>URL embed <span style={{color:"#00b8d9",fontSize:10}}>vileembeds.pages.dev/embed/[slug]</span></label>
-          <input style={inp} value={form.url} onChange={e=>set("url",e.target.value)} placeholder="https://vileembeds.pages.dev/embed/slug"/>
+          <input style={inp} value={form.url} onChange={e=>set("url",e.target.value)} placeholder="/api/watch?c=slug"/>
         </div>
         <div style={{display:"flex",gap:10}}>
           <div style={{flex:1}}><label style={lbl}>Categoría</label><input style={inp} value={form.cat} onChange={e=>set("cat",e.target.value)} placeholder="Deportes"/></div>
@@ -233,7 +233,7 @@ function App() {
                   {/* Overlay de error accesible siempre con botón de fallback */}
                   <div style={{position:"absolute",bottom:16,right:16,display:"flex",gap:8,zIndex:10}}>
                     <a
-                      href={`https://timstreams.st/channel/${active.url.split('/embed/')[1]}`}
+                      href={`https://timstreams.st/channel/${active.url.split('?c=')[1]}`}
                       target="_blank"
                       rel="noopener noreferrer"
                       style={{display:"flex",alignItems:"center",gap:6,background:"#0d1420cc",border:"1px solid #00b8d940",borderRadius:20,padding:"6px 14px",color:"#00b8d9",fontSize:11,fontWeight:600,textDecoration:"none",backdropFilter:"blur(8px)"}}
