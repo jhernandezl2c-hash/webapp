@@ -7,314 +7,331 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.2/babel.min.js"></script>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
   <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    html, body, #root { height: 100%; overflow: hidden; background: #080c12; }
-    body { font-family: 'Inter', system-ui, sans-serif; color: #e8f0ff; }
-    ::-webkit-scrollbar { width: 4px; }
-    ::-webkit-scrollbar-track { background: transparent; }
-    ::-webkit-scrollbar-thumb { background: #1e2a3a; border-radius: 4px; }
-    input::placeholder { color: #2a3a4e; }
-    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.2} }
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    html,body,#root{height:100%;overflow:hidden;background:#080c12}
+    body{font-family:'Inter',system-ui,sans-serif;color:#e8f0ff}
+    ::-webkit-scrollbar{width:4px}
+    ::-webkit-scrollbar-track{background:transparent}
+    ::-webkit-scrollbar-thumb{background:#1e2a3a;border-radius:4px}
+    input::placeholder{color:#2a3a4e}
+    @keyframes blink{0%,100%{opacity:1}50%{opacity:0.2}}
   </style>
 </head>
-<body>
-  <div id="root"></div>
+<body><div id="root"></div>
+<script type="text/babel">
+const { useState } = React;
 
-  <script type="text/babel">
-    const { useState } = React;
+// ═══════════════════════════════════════════════════════════════════
+//  CANALES
+//  slug: el mismo que usa timstreams.st/channel/[slug]
+//        → genera: https://vileembeds.pages.dev/embed/[slug]
+//
+//  Confirmados: fox-sports-1, fox-sports-2, ahc
+//  Para verificar un slug: abre timstreams.st/channel/[slug]
+//  Si carga el canal → el slug es correcto
+// ═══════════════════════════════════════════════════════════════════
+const E = s => `https://vileembeds.pages.dev/embed/${s}`;
 
-    // ═══════════════════════════════════════════════════════
-    //  CANALES — URL completa de vileembeds por canal
-    //  Si un canal no da señal, ajusta el slug en su url
-    // ═══════════════════════════════════════════════════════
-    const V = "https://vileembeds.pages.dev/embed";
-    const c = (id, name, cat, color, slug) => ({
-      id, name, cat, color,
-      num: String(id).padStart(2,"0"),
-      url: `${V}/${slug}`
-    });
+const INITIAL_CHANNELS = [
+  // ── NOTICIAS ──────────────────────────────────────
+  {id:1,  name:"CNN",             cat:"Noticias",        color:"#cc0000", slug:"cnn"},
+  {id:2,  name:"Fox News",        cat:"Noticias",        color:"#003366", slug:"fox-news"},
+  {id:3,  name:"MSNBC",           cat:"Noticias",        color:"#f37021", slug:"msnbc"},
+  {id:4,  name:"CNBC",            cat:"Noticias",        color:"#009bde", slug:"cnbc"},
+  {id:5,  name:"Bloomberg",       cat:"Noticias",        color:"#f26622", slug:"bloomberg-television"},
+  {id:6,  name:"HLN",             cat:"Noticias",        color:"#e31837", slug:"hln"},
+  {id:7,  name:"Newsmax",         cat:"Noticias",        color:"#1b4f8a", slug:"newsmax"},
+  {id:8,  name:"Weather Channel", cat:"Noticias",        color:"#0066cc", slug:"weather-channel"},
+  // ── DEPORTES ──────────────────────────────────────
+  {id:9,  name:"ESPN",            cat:"Deportes",        color:"#cc0000", slug:"espn"},
+  {id:10, name:"ESPN2",           cat:"Deportes",        color:"#cc0000", slug:"espn-2"},
+  {id:11, name:"FS1",             cat:"Deportes",        color:"#003087", slug:"fox-sports-1"},   // ✅
+  {id:12, name:"FS2",             cat:"Deportes",        color:"#003087", slug:"fox-sports-2"},   // ✅
+  {id:13, name:"NFL Network",     cat:"Deportes",        color:"#013369", slug:"nfl-network"},
+  {id:14, name:"NBA TV",          cat:"Deportes",        color:"#17408b", slug:"nba-tv"},
+  {id:15, name:"MLB Network",     cat:"Deportes",        color:"#002d72", slug:"mlb-network"},
+  {id:16, name:"Golf Channel",    cat:"Deportes",        color:"#006341", slug:"golf-channel"},
+  {id:17, name:"CBS Sports",      cat:"Deportes",        color:"#003087", slug:"cbs-sports-network"},
+  {id:18, name:"TUDN",            cat:"Deportes",        color:"#00529b", slug:"tudn"},
+  // ── ENTRETENIMIENTO ───────────────────────────────
+  {id:19, name:"TBS",             cat:"Entretenimiento", color:"#00adef", slug:"tbs"},
+  {id:20, name:"TNT",             cat:"Entretenimiento", color:"#00adef", slug:"tnt"},
+  {id:21, name:"AMC",             cat:"Entretenimiento", color:"#555555", slug:"amc"},
+  {id:22, name:"USA Network",     cat:"Entretenimiento", color:"#0033a0", slug:"usa-network"},
+  {id:23, name:"FX",              cat:"Entretenimiento", color:"#444444", slug:"fx"},
+  {id:24, name:"Bravo",           cat:"Entretenimiento", color:"#9b59b6", slug:"bravo"},
+  {id:25, name:"Syfy",            cat:"Entretenimiento", color:"#b8a000", slug:"syfy"},
+  {id:26, name:"A&E",             cat:"Entretenimiento", color:"#3a3a6e", slug:"ae"},
+  {id:27, name:"Lifetime",        cat:"Entretenimiento", color:"#c0392b", slug:"lifetime"},
+  {id:28, name:"Hallmark",        cat:"Entretenimiento", color:"#9b2335", slug:"hallmark-channel"},
+  // ── DOCUMENTALES ──────────────────────────────────
+  {id:29, name:"Discovery",       cat:"Documentales",    color:"#0077c8", slug:"discovery-channel"},
+  {id:30, name:"History",         cat:"Documentales",    color:"#8b4513", slug:"history-channel"},
+  {id:31, name:"Nat Geo",         cat:"Documentales",    color:"#c8a800", slug:"national-geographic"},
+  {id:32, name:"AHC",             cat:"Documentales",    color:"#8b0000", slug:"ahc"},            // ✅
+  {id:33, name:"Animal Planet",   cat:"Documentales",    color:"#76b900", slug:"animal-planet"},
+  {id:34, name:"Science Ch.",     cat:"Documentales",    color:"#0077b6", slug:"science-channel"},
+  {id:35, name:"Travel Channel",  cat:"Documentales",    color:"#e67e22", slug:"travel-channel"},
+  {id:36, name:"Smithsonian",     cat:"Documentales",    color:"#003087", slug:"smithsonian-channel"},
+  // ── FAMILIA ───────────────────────────────────────
+  {id:37, name:"Disney Channel",  cat:"Familia",         color:"#006ab3", slug:"disney-channel"},
+  {id:38, name:"Disney Jr.",      cat:"Familia",         color:"#e40046", slug:"disney-junior"},
+  {id:39, name:"Cartoon Network", cat:"Familia",         color:"#444444", slug:"cartoon-network"},
+  {id:40, name:"Nickelodeon",     cat:"Familia",         color:"#ff6e00", slug:"nickelodeon"},
+  {id:41, name:"Nick Jr.",        cat:"Familia",         color:"#dd5500", slug:"nick-jr"},
+  // ── ESTILO DE VIDA ────────────────────────────────
+  {id:42, name:"HGTV",            cat:"Estilo de Vida",  color:"#36a849", slug:"hgtv"},
+  {id:43, name:"Food Network",    cat:"Estilo de Vida",  color:"#e83c1a", slug:"food-network"},
+  {id:44, name:"TLC",             cat:"Estilo de Vida",  color:"#d41367", slug:"tlc"},
+  {id:45, name:"E! Network",      cat:"Estilo de Vida",  color:"#555555", slug:"e-entertainment"},
+  {id:46, name:"Oxygen",          cat:"Estilo de Vida",  color:"#00a650", slug:"oxygen"},
+  // ── MÚSICA ────────────────────────────────────────
+  {id:47, name:"MTV",             cat:"Música",          color:"#c8c800", slug:"mtv"},
+  {id:48, name:"VH1",             cat:"Música",          color:"#9b59b6", slug:"vh1"},
+  {id:49, name:"BET",             cat:"Música",          color:"#444444", slug:"bet"},
+  {id:50, name:"CMT",             cat:"Música",          color:"#003366", slug:"cmt"},
+].map(ch => ({ ...ch, num: String(ch.id).padStart(2,"0"), url: E(ch.slug) }));
 
-    const INITIAL_CHANNELS = [
-      // ── NOTICIAS ────────────────────────────────────────
-      c(1,  "CNN",             "Noticias",        "#cc0000", "cnn-usa"),
-      c(2,  "Fox News",        "Noticias",        "#003366", "fox-news-usa"),
-      c(3,  "MSNBC",           "Noticias",        "#f37021", "msnbc-usa"),
-      c(4,  "CNBC",            "Noticias",        "#009bde", "cnbc-usa"),
-      c(5,  "Bloomberg",       "Noticias",        "#f26622", "bloomberg-television-usa"),
-      c(6,  "HLN",             "Noticias",        "#e31837", "hln-usa"),
-      c(7,  "Newsmax",         "Noticias",        "#1b4f8a", "newsmax-usa"),
-      c(8,  "Weather Channel", "Noticias",        "#0066cc", "weather-channel-usa"),
-      // ── DEPORTES ────────────────────────────────────────
-      c(9,  "ESPN",            "Deportes",        "#cc0000", "espn-usa"),
-      c(10, "ESPN2",           "Deportes",        "#cc0000", "espn-2-usa"),
-      c(11, "FS1",             "Deportes",        "#003087", "fox-sports-1"),      // sin -usa (confirmado)
-      c(12, "FS2",             "Deportes",        "#003087", "fox-sports-2"),
-      c(13, "NFL Network",     "Deportes",        "#013369", "nfl-network-usa"),
-      c(14, "NBA TV",          "Deportes",        "#17408b", "nba-tv-usa"),
-      c(15, "MLB Network",     "Deportes",        "#002d72", "mlb-network-usa"),
-      c(16, "Golf Channel",    "Deportes",        "#006341", "golf-channel-usa"),
-      c(17, "CBS Sports",      "Deportes",        "#003087", "cbs-sports-network-usa"),
-      c(18, "TUDN",            "Deportes",        "#00529b", "tudn-usa"),
-      // ── ENTRETENIMIENTO ─────────────────────────────────
-      c(19, "TBS",             "Entretenimiento", "#00adef", "tbs-usa"),
-      c(20, "TNT",             "Entretenimiento", "#00adef", "tnt-usa"),
-      c(21, "AMC",             "Entretenimiento", "#555555", "amc-usa"),
-      c(22, "USA Network",     "Entretenimiento", "#0033a0", "usa-network-usa"),
-      c(23, "FX",              "Entretenimiento", "#444444", "fx-usa"),
-      c(24, "Bravo",           "Entretenimiento", "#9b59b6", "bravo-usa"),
-      c(25, "Syfy",            "Entretenimiento", "#b8a000", "syfy-usa"),
-      c(26, "A&E",             "Entretenimiento", "#3a3a6e", "ae-usa"),
-      c(27, "Lifetime",        "Entretenimiento", "#c0392b", "lifetime-usa"),
-      c(28, "Hallmark",        "Entretenimiento", "#9b2335", "hallmark-channel-usa"),
-      // ── DOCUMENTALES ────────────────────────────────────
-      c(29, "Discovery",       "Documentales",    "#0077c8", "discovery-channel-usa"),
-      c(30, "History",         "Documentales",    "#8b4513", "history-channel-usa"),
-      c(31, "Nat Geo",         "Documentales",    "#c8a800", "national-geographic-usa"),
-      c(32, "AHC",             "Documentales",    "#8b0000", "ahc-usa"),           // confirmado
-      c(33, "Animal Planet",   "Documentales",    "#76b900", "animal-planet-usa"),
-      c(34, "Science Ch.",     "Documentales",    "#0077b6", "science-channel-usa"),
-      c(35, "Travel Channel",  "Documentales",    "#e67e22", "travel-channel-usa"),
-      c(36, "Smithsonian",     "Documentales",    "#003087", "smithsonian-channel-usa"),
-      // ── FAMILIA ─────────────────────────────────────────
-      c(37, "Disney Channel",  "Familia",         "#006ab3", "disney-channel-usa"),
-      c(38, "Disney Jr.",      "Familia",         "#e40046", "disney-junior-usa"),
-      c(39, "Cartoon Network", "Familia",         "#444444", "cartoon-network-usa"),
-      c(40, "Nickelodeon",     "Familia",         "#ff6e00", "nickelodeon-usa"),
-      c(41, "Nick Jr.",        "Familia",         "#dd5500", "nick-jr-usa"),
-      // ── ESTILO DE VIDA ──────────────────────────────────
-      c(42, "HGTV",            "Estilo de Vida",  "#36a849", "hgtv-usa"),
-      c(43, "Food Network",    "Estilo de Vida",  "#e83c1a", "food-network-usa"),
-      c(44, "TLC",             "Estilo de Vida",  "#d41367", "tlc-usa"),
-      c(45, "E! Network",      "Estilo de Vida",  "#555555", "e-entertainment-usa"),
-      c(46, "Oxygen",          "Estilo de Vida",  "#00a650", "oxygen-usa"),
-      // ── MÚSICA ──────────────────────────────────────────
-      c(47, "MTV",             "Música",          "#c8c800", "mtv-usa"),
-      c(48, "VH1",             "Música",          "#9b59b6", "vh1-usa"),
-      c(49, "BET",             "Música",          "#444444", "bet-usa"),
-      c(50, "CMT",             "Música",          "#003366", "cmt-usa"),
-    ];
+const PALETTE = ["#c8102e","#f26622","#0057b8","#1f4ba5","#a855f7","#6d28d9","#1db954","#00b8d9","#ff6a00","#e30613","#0e7490","#be185d"];
 
-    const PALETTE = ["#c8102e","#f26622","#0057b8","#1f4ba5","#a855f7","#6d28d9","#1db954","#00b8d9","#ff6a00","#e30613","#0e7490","#be185d"];
-
-    function toEmbedUrl(url) {
-      try {
-        const u = new URL(url);
-        if (u.hostname === "vileembeds.pages.dev") return url;
-        if (u.hostname.includes("youtube.com") && u.searchParams.get("v"))
-          return `https://www.youtube.com/embed/${u.searchParams.get("v")}?autoplay=1`;
-        if (u.hostname === "youtu.be")
-          return `https://www.youtube.com/embed${u.pathname}?autoplay=1`;
-      } catch {}
-      return url;
-    }
-
-    function ChannelCard({ ch, isActive, isFav, onClick, onFav }) {
-      return (
-        <div onClick={onClick} style={{
-          display:"flex", alignItems:"center", gap:10, padding:"8px 10px",
-          borderRadius:8, cursor:"pointer", marginBottom:2, userSelect:"none",
-          background: isActive ? `${ch.color}18` : "transparent",
-          borderLeft: `3px solid ${isActive ? ch.color : "transparent"}`,
-          transition:"all 0.12s"
-        }}>
-          <div style={{
-            width:38, height:38, borderRadius:8, flexShrink:0,
-            background: isActive ? `${ch.color}30` : "#161d2b",
-            border:`1px solid ${isActive ? ch.color+"60" : "#1e2a3a"}`,
-            display:"flex", alignItems:"center", justifyContent:"center",
-            fontSize:9, fontWeight:800, color: isActive ? ch.color : "#4a5a72",
-            letterSpacing:"-0.3px", lineHeight:1.1, textAlign:"center"
-          }}>{ch.num}</div>
-          <div style={{ flex:1, minWidth:0 }}>
-            <div style={{
-              fontSize:12.5, fontWeight:600, overflow:"hidden", textOverflow:"ellipsis",
-              whiteSpace:"nowrap", color: isActive ? "#e8f0ff" : "#7a91ab"
-            }}>{ch.name}</div>
-            <div style={{ fontSize:10, color:"#3a4f63" }}>{ch.cat}</div>
-          </div>
-          <div style={{ display:"flex", alignItems:"center", gap:5 }}>
-            {isActive && <span style={{ fontSize:7, color:"#ef4444", animation:"blink 1.4s infinite" }}>●</span>}
-            <span onClick={e => { e.stopPropagation(); onFav(); }}
-              style={{ fontSize:13, opacity: isFav ? 1 : 0.2, cursor:"pointer", transition:"opacity 0.15s" }}>★</span>
+// Modal: agregar canal usando slug de timstreams
+function AddModal({ onAdd, onClose, total }) {
+  const [form, setForm] = useState({ name:"", cat:"General", slug:"", color:PALETTE[0] });
+  const set = (k,v) => setForm(f => ({...f,[k]:v}));
+  const handleAdd = () => {
+    if (!form.name.trim() || !form.slug.trim()) return;
+    const id = Date.now();
+    onAdd({ ...form, id, num: String(total+1).padStart(2,"0"), url: E(form.slug.trim()) });
+    onClose();
+  };
+  const inp = { width:"100%", background:"#0d1420", border:"1px solid #1e2a3a", borderRadius:8, padding:"9px 12px", color:"#c8d6e8", fontSize:13, outline:"none", boxSizing:"border-box" };
+  const lbl = { fontSize:11, color:"#4a5a72", display:"block", marginBottom:5 };
+  return (
+    <div onClick={onClose} style={{ position:"fixed", inset:0, background:"#000000bb", display:"flex", alignItems:"center", justifyContent:"center", zIndex:200 }}>
+      <div onClick={e=>e.stopPropagation()} style={{ background:"#0d1420", border:"1px solid #1e2a3a", borderRadius:14, padding:24, width:400, display:"flex", flexDirection:"column", gap:14 }}>
+        <div style={{ fontWeight:700, fontSize:15, color:"#e8f0ff" }}>+ Agregar canal</div>
+        <div>
+          <label style={lbl}>Nombre del canal</label>
+          <input style={inp} value={form.name} onChange={e=>set("name",e.target.value)} placeholder="ej. ESPN Deportes" />
+        </div>
+        <div>
+          <label style={lbl}>
+            Slug de timstreams
+            <span style={{ color:"#00b8d9", marginLeft:6, fontSize:10 }}>timstreams.st/channel/<b>[slug]</b></span>
+          </label>
+          <input style={inp} value={form.slug} onChange={e=>set("slug",e.target.value)} placeholder="ej. espn-deportes" />
+          {form.slug && (
+            <div style={{ fontSize:10, color:"#2a3d52", marginTop:4 }}>
+              → <span style={{ color:"#00b8d9" }}>vileembeds.pages.dev/embed/{form.slug}</span>
+            </div>
+          )}
+        </div>
+        <div style={{ display:"flex", gap:10 }}>
+          <div style={{ flex:1 }}>
+            <label style={lbl}>Categoría</label>
+            <input style={inp} value={form.cat} onChange={e=>set("cat",e.target.value)} placeholder="Deportes" />
           </div>
         </div>
-      );
-    }
-
-    function AddModal({ onAdd, onClose }) {
-      const [form, setForm] = useState({ name:"", cat:"General", url:"", color:PALETTE[0] });
-      const set = (k, v) => setForm(f => ({ ...f, [k]: v }));
-      const handleAdd = () => {
-        if (!form.name.trim() || !form.url.trim()) return;
-        const nextId = Date.now();
-        onAdd({ ...form, id:nextId, num:String(nextId).slice(-2), url:toEmbedUrl(form.url.trim()) });
-        onClose();
-      };
-      const inp = { width:"100%", background:"#0d1420", border:"1px solid #1e2a3a", borderRadius:8, padding:"9px 12px", color:"#c8d6e8", fontSize:13, outline:"none", boxSizing:"border-box" };
-      const lbl = { fontSize:11, color:"#4a5a72", display:"block", marginBottom:5 };
-      return (
-        <div onClick={onClose} style={{ position:"fixed", inset:0, background:"#000000bb", display:"flex", alignItems:"center", justifyContent:"center", zIndex:200 }}>
-          <div onClick={e => e.stopPropagation()} style={{ background:"#0d1420", border:"1px solid #1e2a3a", borderRadius:14, padding:24, width:380, display:"flex", flexDirection:"column", gap:16 }}>
-            <div style={{ fontWeight:700, fontSize:15, color:"#e8f0ff" }}>+ Agregar canal</div>
-            <div>
-              <label style={lbl}>Nombre</label>
-              <input style={inp} value={form.name} onChange={e => set("name", e.target.value)} placeholder="ej. CNN en Español" />
-            </div>
-            <div>
-              <label style={lbl}>URL del stream</label>
-              <input style={inp} value={form.url} onChange={e => set("url", e.target.value)} placeholder="https://vileembeds.pages.dev/embed/canal-usa" />
-              <div style={{ fontSize:10, color:"#2a3d52", marginTop:5 }}>
-                Formato: <span style={{ color:"#00b8d9" }}>https://vileembeds.pages.dev/embed/[slug]-usa</span>
-              </div>
-            </div>
-            <div style={{ display:"flex", gap:10 }}>
-              <div style={{ flex:1 }}>
-                <label style={lbl}>Categoría</label>
-                <input style={inp} value={form.cat} onChange={e => set("cat", e.target.value)} placeholder="Noticias" />
-              </div>
-            </div>
-            <div>
-              <label style={lbl}>Color del canal</label>
-              <div style={{ display:"flex", gap:7, flexWrap:"wrap" }}>
-                {PALETTE.map(col => (
-                  <div key={col} onClick={() => set("color", col)} style={{ width:24, height:24, borderRadius:"50%", background:col, cursor:"pointer", outline: form.color === col ? "2px solid #fff" : "none", outlineOffset:2, flexShrink:0 }} />
-                ))}
-              </div>
-            </div>
-            <div style={{ display:"flex", gap:10, justifyContent:"flex-end", marginTop:4 }}>
-              <button onClick={onClose} style={{ padding:"8px 18px", borderRadius:8, border:"1px solid #1e2a3a", background:"transparent", color:"#4a5a72", cursor:"pointer", fontSize:13 }}>Cancelar</button>
-              <button onClick={handleAdd} style={{ padding:"8px 22px", borderRadius:8, border:"none", background:"#00b8d9", color:"#000", fontWeight:700, cursor:"pointer", fontSize:13 }}>Agregar</button>
-            </div>
+        <div>
+          <label style={lbl}>Color</label>
+          <div style={{ display:"flex", gap:6, flexWrap:"wrap" }}>
+            {PALETTE.map(col => (
+              <div key={col} onClick={()=>set("color",col)} style={{ width:24, height:24, borderRadius:"50%", background:col, cursor:"pointer", outline: form.color===col?"2px solid #fff":"none", outlineOffset:2 }} />
+            ))}
           </div>
         </div>
-      );
-    }
+        <div style={{ display:"flex", gap:10, justifyContent:"flex-end" }}>
+          <button onClick={onClose} style={{ padding:"8px 18px", borderRadius:8, border:"1px solid #1e2a3a", background:"transparent", color:"#4a5a72", cursor:"pointer", fontSize:13 }}>Cancelar</button>
+          <button onClick={handleAdd} style={{ padding:"8px 22px", borderRadius:8, border:"none", background:"#00b8d9", color:"#000", fontWeight:700, cursor:"pointer", fontSize:13 }}>Agregar</button>
+        </div>
+      </div>
+    </div>
+  );
+}
 
-    function App() {
-      const [channels, setChannels] = useState(INITIAL_CHANNELS);
-      const [active, setActive]     = useState(INITIAL_CHANNELS[0]);
-      const [favs, setFavs]         = useState(new Set());
-      const [query, setQuery]       = useState("");
-      const [cat, setCat]           = useState("Todos");
-      const [showFavs, setShowFavs] = useState(false);
-      const [showAdd, setShowAdd]   = useState(false);
-      const [sideOpen, setSideOpen] = useState(true);
+// Modal: editar slug de un canal existente
+function EditSlugModal({ ch, onSave, onClose }) {
+  const [slug, setSlug] = useState(ch.slug);
+  return (
+    <div onClick={onClose} style={{ position:"fixed", inset:0, background:"#000000bb", display:"flex", alignItems:"center", justifyContent:"center", zIndex:200 }}>
+      <div onClick={e=>e.stopPropagation()} style={{ background:"#0d1420", border:"1px solid #1e2a3a", borderRadius:14, padding:24, width:380, display:"flex", flexDirection:"column", gap:14 }}>
+        <div style={{ fontWeight:700, fontSize:15, color:"#e8f0ff" }}>✎ Corregir slug — {ch.name}</div>
+        <div style={{ fontSize:11, color:"#4a5a72" }}>
+          Verifica en <span style={{ color:"#00b8d9" }}>timstreams.st/channel/[slug]</span> que el canal cargue
+        </div>
+        <input
+          value={slug}
+          onChange={e=>setSlug(e.target.value)}
+          style={{ width:"100%", background:"#0d1420", border:"1px solid #1e2a3a", borderRadius:8, padding:"9px 12px", color:"#c8d6e8", fontSize:13, outline:"none" }}
+        />
+        {slug && (
+          <div style={{ fontSize:10, color:"#2a3d52" }}>
+            → <span style={{ color:"#00b8d9" }}>vileembeds.pages.dev/embed/{slug}</span>
+          </div>
+        )}
+        <div style={{ display:"flex", gap:10, justifyContent:"flex-end" }}>
+          <button onClick={onClose} style={{ padding:"8px 18px", borderRadius:8, border:"1px solid #1e2a3a", background:"transparent", color:"#4a5a72", cursor:"pointer", fontSize:13 }}>Cancelar</button>
+          <button onClick={()=>onSave(slug.trim())} style={{ padding:"8px 22px", borderRadius:8, border:"none", background:"#00b8d9", color:"#000", fontWeight:700, cursor:"pointer", fontSize:13 }}>Guardar</button>
+        </div>
+      </div>
+    </div>
+  );
+}
 
-      const cats = ["Todos", ...new Set(channels.map(ch => ch.cat))];
-      const filtered = channels.filter(ch => {
-        if (showFavs && !favs.has(ch.id)) return false;
-        if (cat !== "Todos" && ch.cat !== cat) return false;
-        if (query && !ch.name.toLowerCase().includes(query.toLowerCase())) return false;
-        return true;
-      });
-      const toggleFav = id => setFavs(prev => { const n = new Set(prev); n.has(id) ? n.delete(id) : n.add(id); return n; });
-      const addChannel = ch => { setChannels(prev => [...prev, ch]); setActive(ch); };
+function ChannelCard({ ch, isActive, isFav, onClick, onFav, onEdit }) {
+  return (
+    <div onClick={onClick} style={{
+      display:"flex", alignItems:"center", gap:10, padding:"8px 10px",
+      borderRadius:8, cursor:"pointer", marginBottom:2, userSelect:"none",
+      background: isActive ? `${ch.color}18` : "transparent",
+      borderLeft: `3px solid ${isActive ? ch.color : "transparent"}`,
+      transition:"all 0.12s"
+    }}>
+      <div style={{ width:38, height:38, borderRadius:8, flexShrink:0, background: isActive?`${ch.color}30`:"#161d2b", border:`1px solid ${isActive?ch.color+"60":"#1e2a3a"}`, display:"flex", alignItems:"center", justifyContent:"center", fontSize:9, fontWeight:800, color:isActive?ch.color:"#4a5a72" }}>
+        {ch.num}
+      </div>
+      <div style={{ flex:1, minWidth:0 }}>
+        <div style={{ fontSize:12.5, fontWeight:600, overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap", color:isActive?"#e8f0ff":"#7a91ab" }}>{ch.name}</div>
+        <div style={{ fontSize:9.5, color:"#3a4f63" }}>{ch.slug}</div>
+      </div>
+      <div style={{ display:"flex", alignItems:"center", gap:4 }}>
+        {isActive && <span style={{ fontSize:7, color:"#ef4444", animation:"blink 1.4s infinite" }}>●</span>}
+        <span onClick={e=>{e.stopPropagation();onEdit();}} title="Corregir slug" style={{ fontSize:11, opacity:0.3, cursor:"pointer" }}>✎</span>
+        <span onClick={e=>{e.stopPropagation();onFav();}} style={{ fontSize:13, opacity:isFav?1:0.2, cursor:"pointer" }}>★</span>
+      </div>
+    </div>
+  );
+}
 
-      return (
-        <>
-          <div style={{ display:"flex", height:"100vh", overflow:"hidden", background:"#080c12" }}>
-            {sideOpen && (
-              <aside style={{ width:268, background:"#0b1018", borderRight:"1px solid #131e2c", display:"flex", flexDirection:"column", overflow:"hidden", flexShrink:0 }}>
-                <div style={{ padding:"18px 16px 14px", borderBottom:"1px solid #131e2c" }}>
-                  <div style={{ fontFamily:"'Space Grotesk',sans-serif", fontWeight:800, fontSize:17, letterSpacing:"-0.5px" }}>
-                    <span style={{ color:"#00b8d9" }}>◉</span>
-                    <span style={{ color:"#e8f0ff", marginLeft:8 }}>CanalStream</span>
-                  </div>
-                  <div style={{ fontSize:10.5, color:"#2a3d52", marginTop:3 }}>{channels.length} canales · en vivo</div>
+function App() {
+  const [channels, setChannels] = useState(INITIAL_CHANNELS);
+  const [active, setActive]     = useState(INITIAL_CHANNELS[0]);
+  const [favs, setFavs]         = useState(new Set());
+  const [query, setQuery]       = useState("");
+  const [cat, setCat]           = useState("Todos");
+  const [showFavs, setShowFavs] = useState(false);
+  const [showAdd, setShowAdd]   = useState(false);
+  const [editing, setEditing]   = useState(null);
+  const [sideOpen, setSideOpen] = useState(true);
+
+  const cats = ["Todos", ...new Set(channels.map(c => c.cat))];
+  const filtered = channels.filter(c => {
+    if (showFavs && !favs.has(c.id)) return false;
+    if (cat !== "Todos" && c.cat !== cat) return false;
+    if (query && !c.name.toLowerCase().includes(query.toLowerCase()) && !c.slug.toLowerCase().includes(query.toLowerCase())) return false;
+    return true;
+  });
+
+  const toggleFav = id => setFavs(p => { const n=new Set(p); n.has(id)?n.delete(id):n.add(id); return n; });
+  const addChannel = ch => { setChannels(p=>[...p,ch]); setActive(ch); };
+  const saveSlug = (id, slug) => {
+    setChannels(p => p.map(c => c.id===id ? {...c, slug, url:E(slug)} : c));
+    if (active?.id===id) setActive(ch => ({...ch, slug, url:E(slug)}));
+    setEditing(null);
+  };
+
+  return (
+    <>
+      <div style={{ display:"flex", height:"100vh", overflow:"hidden", background:"#080c12" }}>
+
+        {/* ── SIDEBAR ── */}
+        {sideOpen && (
+          <aside style={{ width:272, background:"#0b1018", borderRight:"1px solid #131e2c", display:"flex", flexDirection:"column", overflow:"hidden", flexShrink:0 }}>
+            <div style={{ padding:"18px 16px 14px", borderBottom:"1px solid #131e2c" }}>
+              <div style={{ fontFamily:"'Space Grotesk',sans-serif", fontWeight:800, fontSize:17, letterSpacing:"-0.5px" }}>
+                <span style={{ color:"#00b8d9" }}>◉</span>
+                <span style={{ color:"#e8f0ff", marginLeft:8 }}>CanalStream</span>
+              </div>
+              <div style={{ fontSize:10, color:"#2a3d52", marginTop:3 }}>{channels.length} canales · ✎ = editar slug</div>
+            </div>
+
+            <div style={{ padding:"10px 12px 6px" }}>
+              <input value={query} onChange={e=>setQuery(e.target.value)} placeholder="Buscar canal o slug..."
+                style={{ width:"100%", background:"#101620", border:"1px solid #1a2535", borderRadius:8, padding:"8px 12px", color:"#8aa6c0", fontSize:12, outline:"none" }} />
+            </div>
+
+            <div style={{ padding:"4px 12px 8px", display:"flex", flexWrap:"wrap", gap:4 }}>
+              {cats.map(ct=>(
+                <button key={ct} onClick={()=>{setCat(ct);setShowFavs(false);}} style={{ padding:"3px 9px", borderRadius:20, border:"none", cursor:"pointer", fontSize:10, fontWeight:600, transition:"all 0.12s", background:!showFavs&&cat===ct?"#00b8d920":"#101620", color:!showFavs&&cat===ct?"#00b8d9":"#36506a", outline:!showFavs&&cat===ct?"1px solid #00b8d940":"none" }}>{ct}</button>
+              ))}
+              <button onClick={()=>{setShowFavs(!showFavs);setCat("Todos");}} style={{ padding:"3px 9px", borderRadius:20, border:"none", cursor:"pointer", fontSize:10, fontWeight:600, background:showFavs?"#f59e0b20":"#101620", color:showFavs?"#f59e0b":"#36506a", outline:showFavs?"1px solid #f59e0b40":"none" }}>★ Favs</button>
+            </div>
+
+            <div style={{ flex:1, overflowY:"auto", padding:"0 8px 8px" }}>
+              {filtered.length===0
+                ? <div style={{ textAlign:"center", color:"#2a3d52", padding:"36px 20px", fontSize:12 }}>Sin resultados</div>
+                : filtered.map(ch=>(
+                  <ChannelCard key={ch.id} ch={ch}
+                    isActive={active?.id===ch.id} isFav={favs.has(ch.id)}
+                    onClick={()=>setActive(ch)} onFav={()=>toggleFav(ch.id)}
+                    onEdit={()=>setEditing(ch)} />
+                ))
+              }
+            </div>
+
+            <div style={{ padding:"10px 12px", borderTop:"1px solid #131e2c" }}>
+              <button onClick={()=>setShowAdd(true)} style={{ width:"100%", padding:"9px", borderRadius:8, cursor:"pointer", background:"#00b8d915", border:"1px solid #00b8d940", color:"#00b8d9", fontWeight:600, fontSize:12.5 }}>
+                + Agregar canal
+              </button>
+            </div>
+          </aside>
+        )}
+
+        {/* ── MAIN ── */}
+        <div style={{ flex:1, display:"flex", flexDirection:"column", overflow:"hidden", minWidth:0 }}>
+          <div style={{ background:"#0b1018", borderBottom:"1px solid #131e2c", padding:"10px 18px", display:"flex", alignItems:"center", gap:12, flexShrink:0 }}>
+            <button onClick={()=>setSideOpen(!sideOpen)} style={{ background:"#101620", border:"1px solid #1a2535", borderRadius:7, color:"#4a6a80", cursor:"pointer", fontSize:14, padding:"5px 9px" }}>☰</button>
+            {active && (
+              <div style={{ display:"flex", alignItems:"center", gap:10 }}>
+                <div style={{ width:34, height:34, borderRadius:8, background:`${active.color}25`, border:`1px solid ${active.color}50`, display:"flex", alignItems:"center", justifyContent:"center", fontSize:9, fontWeight:800, color:active.color }}>{active.num}</div>
+                <div>
+                  <div style={{ fontFamily:"'Space Grotesk',sans-serif", fontWeight:700, fontSize:14, letterSpacing:"-0.3px" }}>{active.name}</div>
+                  <div style={{ fontSize:10, color:"#2a3d52" }}>{active.slug}</div>
                 </div>
-                <div style={{ padding:"12px 12px 8px" }}>
-                  <input value={query} onChange={e => setQuery(e.target.value)} placeholder="Buscar canal..."
-                    style={{ width:"100%", background:"#101620", border:"1px solid #1a2535", borderRadius:8, padding:"8px 12px", color:"#8aa6c0", fontSize:12.5, outline:"none" }} />
-                </div>
-                <div style={{ padding:"4px 12px 10px", display:"flex", flexWrap:"wrap", gap:5 }}>
-                  {cats.map(ct => (
-                    <button key={ct} onClick={() => { setCat(ct); setShowFavs(false); }} style={{
-                      padding:"4px 10px", borderRadius:20, border:"none", cursor:"pointer", fontSize:10.5, fontWeight:600, transition:"all 0.12s",
-                      background: !showFavs && cat === ct ? "#00b8d920" : "#101620",
-                      color: !showFavs && cat === ct ? "#00b8d9" : "#36506a",
-                      outline: !showFavs && cat === ct ? "1px solid #00b8d940" : "none"
-                    }}>{ct}</button>
-                  ))}
-                  <button onClick={() => { setShowFavs(!showFavs); setCat("Todos"); }} style={{
-                    padding:"4px 10px", borderRadius:20, border:"none", cursor:"pointer", fontSize:10.5, fontWeight:600, transition:"all 0.12s",
-                    background: showFavs ? "#f59e0b20" : "#101620",
-                    color: showFavs ? "#f59e0b" : "#36506a",
-                    outline: showFavs ? "1px solid #f59e0b40" : "none"
-                  }}>★ Favoritos</button>
-                </div>
-                <div style={{ flex:1, overflowY:"auto", padding:"0 8px 8px" }}>
-                  {filtered.length === 0
-                    ? <div style={{ textAlign:"center", color:"#2a3d52", padding:"36px 20px", fontSize:12 }}>Sin canales disponibles</div>
-                    : filtered.map(ch => (
-                      <ChannelCard key={ch.id} ch={ch}
-                        isActive={active?.id === ch.id} isFav={favs.has(ch.id)}
-                        onClick={() => setActive(ch)} onFav={() => toggleFav(ch.id)} />
-                    ))
-                  }
-                </div>
-                <div style={{ padding:"10px 12px", borderTop:"1px solid #131e2c" }}>
-                  <button onClick={() => setShowAdd(true)} style={{ width:"100%", padding:"9px", borderRadius:8, cursor:"pointer", background:"#00b8d915", border:"1px solid #00b8d940", color:"#00b8d9", fontWeight:600, fontSize:12.5 }}>
-                    + Agregar canal
-                  </button>
-                </div>
-              </aside>
+              </div>
             )}
-
-            <div style={{ flex:1, display:"flex", flexDirection:"column", overflow:"hidden", minWidth:0 }}>
-              <div style={{ background:"#0b1018", borderBottom:"1px solid #131e2c", padding:"10px 18px", display:"flex", alignItems:"center", gap:12, flexShrink:0 }}>
-                <button onClick={() => setSideOpen(!sideOpen)} style={{ background:"#101620", border:"1px solid #1a2535", borderRadius:7, color:"#4a6a80", cursor:"pointer", fontSize:14, padding:"5px 9px" }}>☰</button>
-                {active && (
-                  <div style={{ display:"flex", alignItems:"center", gap:10 }}>
-                    <div style={{ width:34, height:34, borderRadius:8, background:`${active.color}25`, border:`1px solid ${active.color}50`, display:"flex", alignItems:"center", justifyContent:"center", fontSize:9, fontWeight:800, color:active.color }}>{active.num}</div>
-                    <div>
-                      <div style={{ fontFamily:"'Space Grotesk',sans-serif", fontWeight:700, fontSize:14, letterSpacing:"-0.3px" }}>{active.name}</div>
-                      <div style={{ fontSize:10.5, color:"#2a3d52" }}>{active.cat}</div>
-                    </div>
-                  </div>
-                )}
-                <div style={{ marginLeft:"auto", display:"flex", alignItems:"center", gap:7, background:"#2a060618", border:"1px solid #ef444440", borderRadius:20, padding:"4px 13px" }}>
-                  <span style={{ fontSize:7, color:"#ef4444", animation:"blink 1.4s infinite" }}>●</span>
-                  <span style={{ fontSize:10.5, fontWeight:700, color:"#ef4444", letterSpacing:1.5 }}>EN VIVO</span>
-                </div>
-                {active && (
-                  <button onClick={() => toggleFav(active.id)} style={{ background:"transparent", border:"none", cursor:"pointer", fontSize:18, color: favs.has(active.id) ? "#f59e0b" : "#2a3d52", transition:"color 0.15s" }}>★</button>
-                )}
-              </div>
-
-              <div style={{ flex:1, background:"#000", position:"relative", overflow:"hidden" }}>
-                {active
-                  ? <iframe key={active.id} src={active.url} style={{ width:"100%", height:"100%", border:"none", display:"block" }} allowFullScreen allow="autoplay; encrypted-media; fullscreen; picture-in-picture" referrerPolicy="no-referrer-when-downgrade" />
-                  : <div style={{ display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center", height:"100%", gap:12, color:"#1e2a3a" }}><div style={{ fontSize:48 }}>◉</div><div style={{ fontSize:14 }}>Selecciona un canal</div></div>
-                }
-              </div>
-
-              <div style={{ background:"#0b1018", borderTop:"1px solid #131e2c", padding:"8px 12px", display:"flex", gap:7, overflowX:"auto", flexShrink:0 }}>
-                {channels.map(ch => {
-                  const isA = active?.id === ch.id;
-                  return (
-                    <button key={ch.id} onClick={() => setActive(ch)} title={ch.name} style={{
-                      flexShrink:0, width:54, height:40, borderRadius:8, cursor:"pointer",
-                      background: isA ? `${ch.color}25` : "#101620",
-                      border:`1px solid ${isA ? ch.color+"70" : "#1a2535"}`,
-                      display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center", gap:2, transition:"all 0.12s"
-                    }}>
-                      <div style={{ fontSize:8, fontWeight:800, color: isA ? ch.color : "#36506a" }}>{ch.num}</div>
-                      <div style={{ fontSize:7.5, color: isA ? "#8ab" : "#2a3d52", overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap", maxWidth:48, textAlign:"center" }}>{ch.name.split(" ")[0]}</div>
-                    </button>
-                  );
-                })}
-              </div>
+            <div style={{ marginLeft:"auto", display:"flex", alignItems:"center", gap:7, background:"#2a060618", border:"1px solid #ef444440", borderRadius:20, padding:"4px 13px" }}>
+              <span style={{ fontSize:7, color:"#ef4444", animation:"blink 1.4s infinite" }}>●</span>
+              <span style={{ fontSize:10.5, fontWeight:700, color:"#ef4444", letterSpacing:1.5 }}>EN VIVO</span>
             </div>
+            {active && (
+              <>
+                <button onClick={()=>setEditing(active)} title="Corregir slug" style={{ background:"#101620", border:"1px solid #1a2535", borderRadius:7, color:"#4a6a80", cursor:"pointer", fontSize:13, padding:"5px 9px" }}>✎</button>
+                <button onClick={()=>toggleFav(active.id)} style={{ background:"transparent", border:"none", cursor:"pointer", fontSize:18, color:favs.has(active.id)?"#f59e0b":"#2a3d52" }}>★</button>
+              </>
+            )}
           </div>
-          {showAdd && <AddModal onAdd={addChannel} onClose={() => setShowAdd(false)} />}
-        </>
-      );
-    }
 
-    ReactDOM.createRoot(document.getElementById("root")).render(<App />);
-  </script>
+          <div style={{ flex:1, background:"#000", overflow:"hidden" }}>
+            {active
+              ? <iframe key={active.id} src={active.url} style={{ width:"100%", height:"100%", border:"none", display:"block" }} allowFullScreen allow="autoplay; encrypted-media; fullscreen; picture-in-picture" referrerPolicy="no-referrer-when-downgrade" />
+              : <div style={{ display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center", height:"100%", gap:12, color:"#1e2a3a" }}><div style={{ fontSize:48 }}>◉</div></div>
+            }
+          </div>
+
+          <div style={{ background:"#0b1018", borderTop:"1px solid #131e2c", padding:"8px 12px", display:"flex", gap:6, overflowX:"auto", flexShrink:0 }}>
+            {channels.map(ch=>{
+              const isA=active?.id===ch.id;
+              return (
+                <button key={ch.id} onClick={()=>setActive(ch)} title={ch.name} style={{ flexShrink:0, width:54, height:40, borderRadius:8, cursor:"pointer", background:isA?`${ch.color}25`:"#101620", border:`1px solid ${isA?ch.color+"70":"#1a2535"}`, display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center", gap:2 }}>
+                  <div style={{ fontSize:8, fontWeight:800, color:isA?ch.color:"#36506a" }}>{ch.num}</div>
+                  <div style={{ fontSize:7, color:isA?"#8ab":"#2a3d52", overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap", maxWidth:48, textAlign:"center" }}>{ch.name.split(" ")[0]}</div>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      </div>
+
+      {showAdd && <AddModal onAdd={addChannel} onClose={()=>setShowAdd(false)} total={channels.length} />}
+      {editing && <EditSlugModal ch={editing} onSave={(slug)=>saveSlug(editing.id,slug)} onClose={()=>setEditing(null)} />}
+    </>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+</script>
 </body>
 </html>
