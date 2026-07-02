@@ -1,166 +1,324 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Mundial 2026 · En Vivo</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=IBM+Plex+Mono:wght@500;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
-<style>
-  :root{
-    --bg:#0a0d12;
-    --bg2:#0e1219;
-    --panel:#11151d;
-    --line:#1f2733;
-    --text:#eef1f6;
-    --muted:#7c8696;
-    --accent:#ffb703;
-    --accent-soft:#3a2f0e;
-    --teal:#00c2a8;
-    --live:#ff3b3b;
-  }
-  *{box-sizing:border-box;margin:0;padding:0;}
-  body{
-    background:
-      radial-gradient(900px 500px at 100% -10%, rgba(0,194,168,.08), transparent),
-      radial-gradient(700px 400px at -10% 10%, rgba(255,183,3,.06), transparent),
-      var(--bg);
-    color:var(--text);
-    font-family:'Inter',system-ui,sans-serif;
-    min-height:100vh;
-  }
-
-  header{
-    display:flex;align-items:center;justify-content:space-between;
-    padding:18px 24px;border-bottom:1px solid var(--line);
-    background:linear-gradient(180deg,var(--bg2),var(--bg));
-    position:sticky;top:0;z-index:10;
-  }
-  .brand{display:flex;align-items:center;gap:10px;}
-  .brand .dot{width:9px;height:9px;border-radius:50%;background:var(--live);box-shadow:0 0 8px var(--live);animation:pulse 1.6s infinite;}
-  .brand-text{font-family:'Space Grotesk',sans-serif;font-weight:700;letter-spacing:.3px;font-size:16px;}
-  .brand-text small{display:block;font-family:'IBM Plex Mono',monospace;font-weight:500;font-size:10px;letter-spacing:2px;color:var(--muted);margin-top:1px;}
-  .cast-btn{
-    display:flex;align-items:center;gap:8px;
-    background:transparent;border:1px solid var(--accent);
-    color:var(--accent);padding:9px 16px;border-radius:6px;
-    cursor:pointer;font-size:13px;font-weight:600;font-family:'IBM Plex Mono',monospace;
-    letter-spacing:.5px;transition:.2s;
-  }
-  .cast-btn:hover{background:var(--accent);color:#1a1300;}
-
-  main{
-    max-width:1140px;margin:0 auto;padding:24px 18px 60px;
-    display:grid;grid-template-columns:1fr;gap:20px;
-  }
-  @media(min-width:900px){
-    main{grid-template-columns:2fr 1fr;align-items:start;}
-  }
-
-  .player-wrap{
-    background:var(--panel);border:1px solid var(--line);border-radius:4px;
-    overflow:hidden;position:relative;
-  }
-  .player-wrap::before{
-    content:'';position:absolute;inset:0;pointer-events:none;z-index:2;
-    border:1px solid transparent;
-    background:
-      linear-gradient(var(--panel),var(--panel)) padding-box,
-      linear-gradient(135deg, var(--accent), transparent 30%, transparent 70%, var(--teal)) border-box;
-    -webkit-mask:linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
-    -webkit-mask-composite:xor; mask-composite:exclude;
-    opacity:.5;
-  }
-  .player-frame{
-    position:relative;width:100%;aspect-ratio:16/9;background:#000;
-  }
-  .player-frame iframe{width:100%;height:100%;border:0;display:block;}
-  .player-empty{
-    position:absolute;inset:0;display:flex;flex-direction:column;
-    align-items:center;justify-content:center;gap:8px;color:var(--muted);
-    text-align:center;padding:20px;font-family:'IBM Plex Mono',monospace;font-size:13px;
-  }
-  .player-empty a{color:var(--teal);}
-  .player-meta{padding:14px 18px;border-top:1px solid var(--line);
-    display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;}
-  .player-title{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:15px;}
-  .live-pill{
-    display:inline-flex;align-items:center;gap:6px;
-    background:rgba(255,59,59,.12);color:var(--live);
-    padding:4px 10px;border-radius:4px;font-size:11px;font-weight:600;
-    letter-spacing:1px;font-family:'IBM Plex Mono',monospace;
-  }
-  .live-pill .blip{width:6px;height:6px;border-radius:50%;background:var(--live);animation:pulse 1.4s infinite;}
-  @keyframes pulse{0%,100%{opacity:1;}50%{opacity:.25;}}
-
-  .panel{
-    background:var(--panel);border:1px solid var(--line);border-radius:4px;
-    padding:0;overflow:hidden;
-  }
-  .panel h2{
-    font-family:'IBM Plex Mono',monospace;font-size:11px;text-transform:uppercase;
-    letter-spacing:2px;color:var(--accent);padding:14px 16px;
-    border-bottom:1px solid var(--line);background:rgba(255,183,3,.04);
-  }
-  .match-list{max-height:74vh;overflow-y:auto;}
-  .match-row{
-    display:flex;align-items:center;justify-content:space-between;
-    padding:13px 16px;border-bottom:1px solid var(--line);font-size:13.5px;
-    border-left:2px solid transparent;
-  }
-  .match-row.is-live{border-left-color:var(--live);background:rgba(255,59,59,.04);}
-  .match-row:last-child{border-bottom:none;}
-  .match-teams{display:flex;flex-direction:column;gap:3px;min-width:0;}
-  .match-teams strong{font-weight:600;font-size:13.5px;}
-  .match-score{
-    font-family:'IBM Plex Mono',monospace;font-weight:600;font-size:16px;
-    color:var(--text);
-  }
-  .match-time{color:var(--muted);font-size:11px;font-family:'IBM Plex Mono',monospace;text-align:right;}
-  .match-time.is-live{color:var(--live);font-weight:600;}
-  .group-tag{color:var(--muted);font-size:11px;}
-
-  .toast{
-    position:fixed;bottom:24px;left:50%;transform:translateX(-50%);
-    background:var(--panel);border:1px solid var(--teal);color:var(--text);
-    padding:12px 18px;border-radius:6px;font-size:13px;max-width:90vw;
-    opacity:0;pointer-events:none;transition:.25s;z-index:50;
-  }
-  .toast.show{opacity:1;transform:translateX(-50%) translateY(-6px);}
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CanalStream · TV en Vivo</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.2/babel.min.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body, #root { height: 100%; overflow: hidden; background: #080c12; }
+    body { font-family: 'Inter', system-ui, sans-serif; color: #e8f0ff; }
+    ::-webkit-scrollbar { width: 4px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: #1e2a3a; border-radius: 4px; }
+    input::placeholder { color: #2a3a4e; }
+    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.2} }
+  </style>
 </head>
 <body>
+  <div id="root"></div>
 
-<header>
-  <div class="brand">
-    <span class="dot"></span>
-    <span class="brand-text">Mundial 2026<small>TRANSMISIÓN EN VIVO</small></span>
-  </div>
-  <button class="cast-btn" id="castBtn">⛶ TRANSMITIR</button>
-</header>
+  <script type="text/babel">
+    const { useState } = React;
 
-<main>
-  <section class="player-wrap">
-    <div class="player-frame" id="playerFrame">
-      <div class="player-empty" id="playerEmpty">
-        <div>SIN SEÑAL</div>
-      </div>
-    </div>
-    <div class="player-meta">
-      <span class="player-title" id="playerTitle">Sin transmisión activa</span>
-      <span class="live-pill" id="livePill" style="display:none"><span class="blip"></span>EN VIVO</span>
-    </div>
-  </section>
+    // ═══════════════════════════════════════════════════
+    //  CANALES — formato: https://vileembeds.pages.dev/embed/[canal]-usa
+    // ═══════════════════════════════════════════════════
+    const BASE = "https://vileembeds.pages.dev/embed";
+    const ch = (id, name, cat, color, slug) => ({
+      id, name, cat, num: String(id).padStart(2, "0"), color,
+      url: `${BASE}/${slug}-usa`
+    });
 
-  <aside class="panel">
-    <h2>Partidos · Mundial 2026</h2>
-    <div class="match-list" id="matchList">Cargando partidos…</div>
-  </aside>
-</main>
+    const INITIAL_CHANNELS = [
+      // NOTICIAS
+      ch(1,  "CNN",            "Noticias",        "#cc0000",  "cnn"),
+      ch(2,  "Fox News",       "Noticias",        "#003366",  "fox-news"),
+      ch(3,  "MSNBC",          "Noticias",        "#f37021",  "msnbc"),
+      ch(4,  "CNBC",           "Noticias",        "#009bde",  "cnbc"),
+      ch(5,  "Bloomberg",      "Noticias",        "#f26622",  "bloomberg"),
+      ch(6,  "HLN",            "Noticias",        "#e31837",  "hln"),
+      ch(7,  "Newsmax",        "Noticias",        "#1b4f8a",  "newsmax"),
+      ch(8,  "The Weather Ch", "Noticias",        "#0066cc",  "weather"),
+      // DEPORTES
+      ch(9,  "ESPN",           "Deportes",        "#cc0000",  "espn"),
+      ch(10, "ESPN2",          "Deportes",        "#cc0000",  "espn2"),
+      ch(11, "FS1",            "Deportes",        "#003087",  "fs1"),
+      ch(12, "FS2",            "Deportes",        "#003087",  "fs2"),
+      ch(13, "NFL Network",    "Deportes",        "#013369",  "nfl-network"),
+      ch(14, "NBA TV",         "Deportes",        "#17408b",  "nba-tv"),
+      ch(15, "MLB Network",    "Deportes",        "#002d72",  "mlb-network"),
+      ch(16, "Golf Channel",   "Deportes",        "#006341",  "golf"),
+      ch(17, "CBS Sports",     "Deportes",        "#003087",  "cbs-sports"),
+      ch(18, "TUDN",           "Deportes",        "#00529b",  "tudn"),
+      // ENTRETENIMIENTO
+      ch(19, "TBS",            "Entretenimiento", "#00adef",  "tbs"),
+      ch(20, "TNT",            "Entretenimiento", "#00adef",  "tnt"),
+      ch(21, "AMC",            "Entretenimiento", "#555555",  "amc"),
+      ch(22, "USA Network",    "Entretenimiento", "#0033a0",  "usa"),
+      ch(23, "FX",             "Entretenimiento", "#444444",  "fx"),
+      ch(24, "Bravo",          "Entretenimiento", "#9b59b6",  "bravo"),
+      ch(25, "Syfy",           "Entretenimiento", "#b8a000",  "syfy"),
+      ch(26, "A&E",            "Entretenimiento", "#3a3a6e",  "aande"),
+      ch(27, "Lifetime",       "Entretenimiento", "#c0392b",  "lifetime"),
+      ch(28, "Hallmark",       "Entretenimiento", "#9b2335",  "hallmark"),
+      // DOCUMENTALES
+      ch(29, "Discovery",      "Documentales",    "#0077c8",  "discovery"),
+      ch(30, "History",        "Documentales",    "#8b4513",  "history"),
+      ch(31, "Nat Geo",        "Documentales",    "#c8a800",  "nat-geo"),
+      ch(32, "AHC",            "Documentales",    "#8b0000",  "ahc"),
+      ch(33, "Animal Planet",  "Documentales",    "#76b900",  "animal-planet"),
+      ch(34, "Science Ch.",    "Documentales",    "#0077b6",  "science"),
+      ch(35, "Travel Channel", "Documentales",    "#e67e22",  "travel"),
+      ch(36, "Smithsonian",    "Documentales",    "#003087",  "smithsonian"),
+      // FAMILIA
+      ch(37, "Disney Channel", "Familia",         "#006ab3",  "disney"),
+      ch(38, "Disney Jr.",     "Familia",         "#e40046",  "disney-jr"),
+      ch(39, "Cartoon Network","Familia",          "#444444",  "cartoon-network"),
+      ch(40, "Nickelodeon",    "Familia",         "#ff6e00",  "nickelodeon"),
+      ch(41, "Nick Jr.",       "Familia",         "#dd5500",  "nick-jr"),
+      // ESTILO DE VIDA
+      ch(42, "HGTV",           "Estilo de Vida",  "#36a849",  "hgtv"),
+      ch(43, "Food Network",   "Estilo de Vida",  "#e83c1a",  "food"),
+      ch(44, "TLC",            "Estilo de Vida",  "#d41367",  "tlc"),
+      ch(45, "E! Network",     "Estilo de Vida",  "#555555",  "e"),
+      ch(46, "Oxygen",         "Estilo de Vida",  "#00a650",  "oxygen"),
+      // MÚSICA
+      ch(47, "MTV",            "Música",          "#c8c800",  "mtv"),
+      ch(48, "VH1",            "Música",          "#9b59b6",  "vh1"),
+      ch(49, "BET",            "Música",          "#444444",  "bet"),
+      ch(50, "CMT",            "Música",          "#003366",  "cmt"),
+    ];
 
-<div class="toast" id="toast"></div>
+    const PALETTE = ["#c8102e","#f26622","#0057b8","#1f4ba5","#a855f7","#6d28d9","#1db954","#00b8d9","#ff6a00","#e30613","#0e7490","#be185d"];
 
-<script src="config.js"></script>
-<script src="app.js"></script>
+    function toEmbedUrl(url) {
+      try {
+        const u = new URL(url);
+        if (u.hostname === "vileembeds.pages.dev") return url;
+        if (u.hostname.includes("youtube.com") && u.searchParams.get("v"))
+          return `https://www.youtube.com/embed/${u.searchParams.get("v")}?autoplay=1`;
+        if (u.hostname === "youtu.be")
+          return `https://www.youtube.com/embed${u.pathname}?autoplay=1`;
+      } catch {}
+      return url;
+    }
+
+    function ChannelCard({ ch, isActive, isFav, onClick, onFav }) {
+      return (
+        <div onClick={onClick} style={{
+          display:"flex", alignItems:"center", gap:10, padding:"8px 10px",
+          borderRadius:8, cursor:"pointer", marginBottom:2, userSelect:"none",
+          background: isActive ? `${ch.color}18` : "transparent",
+          borderLeft: `3px solid ${isActive ? ch.color : "transparent"}`,
+          transition:"all 0.12s"
+        }}>
+          <div style={{
+            width:38, height:38, borderRadius:8, flexShrink:0,
+            background: isActive ? `${ch.color}30` : "#161d2b",
+            border:`1px solid ${isActive ? ch.color+"60" : "#1e2a3a"}`,
+            display:"flex", alignItems:"center", justifyContent:"center",
+            fontSize:9, fontWeight:800, color: isActive ? ch.color : "#4a5a72",
+            letterSpacing:"-0.3px", lineHeight:1.1, textAlign:"center"
+          }}>{ch.num}</div>
+          <div style={{ flex:1, minWidth:0 }}>
+            <div style={{
+              fontSize:12.5, fontWeight:600, overflow:"hidden", textOverflow:"ellipsis",
+              whiteSpace:"nowrap", color: isActive ? "#e8f0ff" : "#7a91ab"
+            }}>{ch.name}</div>
+            <div style={{ fontSize:10, color:"#3a4f63" }}>{ch.cat}</div>
+          </div>
+          <div style={{ display:"flex", alignItems:"center", gap:5 }}>
+            {isActive && <span style={{ fontSize:7, color:"#ef4444", animation:"blink 1.4s infinite" }}>●</span>}
+            <span onClick={e => { e.stopPropagation(); onFav(); }}
+              style={{ fontSize:13, opacity: isFav ? 1 : 0.2, cursor:"pointer", transition:"opacity 0.15s" }}>★</span>
+          </div>
+        </div>
+      );
+    }
+
+    function AddModal({ onAdd, onClose }) {
+      const [form, setForm] = useState({ name:"", cat:"General", url:"", color:PALETTE[0] });
+      const set = (k, v) => setForm(f => ({ ...f, [k]: v }));
+      const handleAdd = () => {
+        if (!form.name.trim() || !form.url.trim()) return;
+        const nextId = Date.now();
+        onAdd({ ...form, id:nextId, num:String(nextId).slice(-2), url:toEmbedUrl(form.url.trim()) });
+        onClose();
+      };
+      const inp = { width:"100%", background:"#0d1420", border:"1px solid #1e2a3a", borderRadius:8, padding:"9px 12px", color:"#c8d6e8", fontSize:13, outline:"none", boxSizing:"border-box" };
+      const lbl = { fontSize:11, color:"#4a5a72", display:"block", marginBottom:5 };
+      return (
+        <div onClick={onClose} style={{ position:"fixed", inset:0, background:"#000000bb", display:"flex", alignItems:"center", justifyContent:"center", zIndex:200 }}>
+          <div onClick={e => e.stopPropagation()} style={{ background:"#0d1420", border:"1px solid #1e2a3a", borderRadius:14, padding:24, width:380, display:"flex", flexDirection:"column", gap:16 }}>
+            <div style={{ fontWeight:700, fontSize:15, color:"#e8f0ff" }}>+ Agregar canal</div>
+            <div>
+              <label style={lbl}>Nombre</label>
+              <input style={inp} value={form.name} onChange={e => set("name", e.target.value)} placeholder="ej. CNN en Español" />
+            </div>
+            <div>
+              <label style={lbl}>URL del stream</label>
+              <input style={inp} value={form.url} onChange={e => set("url", e.target.value)} placeholder="https://vileembeds.pages.dev/embed/canal-usa" />
+              <div style={{ fontSize:10, color:"#2a3d52", marginTop:5 }}>
+                Formato: <span style={{ color:"#00b8d9" }}>https://vileembeds.pages.dev/embed/[canal]-usa</span>
+              </div>
+            </div>
+            <div style={{ display:"flex", gap:10 }}>
+              <div style={{ flex:1 }}>
+                <label style={lbl}>Categoría</label>
+                <input style={inp} value={form.cat} onChange={e => set("cat", e.target.value)} placeholder="Noticias" />
+              </div>
+            </div>
+            <div>
+              <label style={lbl}>Color del canal</label>
+              <div style={{ display:"flex", gap:7, flexWrap:"wrap" }}>
+                {PALETTE.map(c => (
+                  <div key={c} onClick={() => set("color", c)} style={{ width:24, height:24, borderRadius:"50%", background:c, cursor:"pointer", outline: form.color === c ? "2px solid #fff" : "none", outlineOffset:2, flexShrink:0 }} />
+                ))}
+              </div>
+            </div>
+            <div style={{ display:"flex", gap:10, justifyContent:"flex-end", marginTop:4 }}>
+              <button onClick={onClose} style={{ padding:"8px 18px", borderRadius:8, border:"1px solid #1e2a3a", background:"transparent", color:"#4a5a72", cursor:"pointer", fontSize:13 }}>Cancelar</button>
+              <button onClick={handleAdd} style={{ padding:"8px 22px", borderRadius:8, border:"none", background:"#00b8d9", color:"#000", fontWeight:700, cursor:"pointer", fontSize:13 }}>Agregar</button>
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    function App() {
+      const [channels, setChannels] = useState(INITIAL_CHANNELS);
+      const [active, setActive]     = useState(INITIAL_CHANNELS[0]);
+      const [favs, setFavs]         = useState(new Set());
+      const [query, setQuery]       = useState("");
+      const [cat, setCat]           = useState("Todos");
+      const [showFavs, setShowFavs] = useState(false);
+      const [showAdd, setShowAdd]   = useState(false);
+      const [sideOpen, setSideOpen] = useState(true);
+
+      const cats = ["Todos", ...new Set(channels.map(c => c.cat))];
+      const filtered = channels.filter(c => {
+        if (showFavs && !favs.has(c.id)) return false;
+        if (cat !== "Todos" && c.cat !== cat) return false;
+        if (query && !c.name.toLowerCase().includes(query.toLowerCase())) return false;
+        return true;
+      });
+      const toggleFav = id => setFavs(prev => { const n = new Set(prev); n.has(id) ? n.delete(id) : n.add(id); return n; });
+      const addChannel = c => { setChannels(prev => [...prev, c]); setActive(c); };
+
+      return (
+        <>
+          <div style={{ display:"flex", height:"100vh", overflow:"hidden", background:"#080c12" }}>
+
+            {sideOpen && (
+              <aside style={{ width:268, background:"#0b1018", borderRight:"1px solid #131e2c", display:"flex", flexDirection:"column", overflow:"hidden", flexShrink:0 }}>
+                <div style={{ padding:"18px 16px 14px", borderBottom:"1px solid #131e2c" }}>
+                  <div style={{ fontFamily:"'Space Grotesk',sans-serif", fontWeight:800, fontSize:17, letterSpacing:"-0.5px" }}>
+                    <span style={{ color:"#00b8d9" }}>◉</span>
+                    <span style={{ color:"#e8f0ff", marginLeft:8 }}>CanalStream</span>
+                  </div>
+                  <div style={{ fontSize:10.5, color:"#2a3d52", marginTop:3 }}>{channels.length} canales · en vivo</div>
+                </div>
+
+                <div style={{ padding:"12px 12px 8px" }}>
+                  <input value={query} onChange={e => setQuery(e.target.value)} placeholder="Buscar canal..."
+                    style={{ width:"100%", background:"#101620", border:"1px solid #1a2535", borderRadius:8, padding:"8px 12px", color:"#8aa6c0", fontSize:12.5, outline:"none" }} />
+                </div>
+
+                <div style={{ padding:"4px 12px 10px", display:"flex", flexWrap:"wrap", gap:5 }}>
+                  {cats.map(c => (
+                    <button key={c} onClick={() => { setCat(c); setShowFavs(false); }} style={{
+                      padding:"4px 10px", borderRadius:20, border:"none", cursor:"pointer", fontSize:10.5, fontWeight:600, transition:"all 0.12s",
+                      background: !showFavs && cat === c ? "#00b8d920" : "#101620",
+                      color: !showFavs && cat === c ? "#00b8d9" : "#36506a",
+                      outline: !showFavs && cat === c ? "1px solid #00b8d940" : "none"
+                    }}>{c}</button>
+                  ))}
+                  <button onClick={() => { setShowFavs(!showFavs); setCat("Todos"); }} style={{
+                    padding:"4px 10px", borderRadius:20, border:"none", cursor:"pointer", fontSize:10.5, fontWeight:600, transition:"all 0.12s",
+                    background: showFavs ? "#f59e0b20" : "#101620",
+                    color: showFavs ? "#f59e0b" : "#36506a",
+                    outline: showFavs ? "1px solid #f59e0b40" : "none"
+                  }}>★ Favoritos</button>
+                </div>
+
+                <div style={{ flex:1, overflowY:"auto", padding:"0 8px 8px" }}>
+                  {filtered.length === 0
+                    ? <div style={{ textAlign:"center", color:"#2a3d52", padding:"36px 20px", fontSize:12 }}>Sin canales disponibles</div>
+                    : filtered.map(c => (
+                      <ChannelCard key={c.id} ch={c}
+                        isActive={active?.id === c.id} isFav={favs.has(c.id)}
+                        onClick={() => setActive(c)} onFav={() => toggleFav(c.id)} />
+                    ))
+                  }
+                </div>
+
+                <div style={{ padding:"10px 12px", borderTop:"1px solid #131e2c" }}>
+                  <button onClick={() => setShowAdd(true)} style={{ width:"100%", padding:"9px", borderRadius:8, cursor:"pointer", background:"#00b8d915", border:"1px solid #00b8d940", color:"#00b8d9", fontWeight:600, fontSize:12.5 }}>
+                    + Agregar canal
+                  </button>
+                </div>
+              </aside>
+            )}
+
+            <div style={{ flex:1, display:"flex", flexDirection:"column", overflow:"hidden", minWidth:0 }}>
+
+              <div style={{ background:"#0b1018", borderBottom:"1px solid #131e2c", padding:"10px 18px", display:"flex", alignItems:"center", gap:12, flexShrink:0 }}>
+                <button onClick={() => setSideOpen(!sideOpen)} style={{ background:"#101620", border:"1px solid #1a2535", borderRadius:7, color:"#4a6a80", cursor:"pointer", fontSize:14, padding:"5px 9px" }}>☰</button>
+                {active && (
+                  <div style={{ display:"flex", alignItems:"center", gap:10 }}>
+                    <div style={{ width:34, height:34, borderRadius:8, background:`${active.color}25`, border:`1px solid ${active.color}50`, display:"flex", alignItems:"center", justifyContent:"center", fontSize:9, fontWeight:800, color:active.color }}>{active.num}</div>
+                    <div>
+                      <div style={{ fontFamily:"'Space Grotesk',sans-serif", fontWeight:700, fontSize:14, letterSpacing:"-0.3px" }}>{active.name}</div>
+                      <div style={{ fontSize:10.5, color:"#2a3d52" }}>{active.cat}</div>
+                    </div>
+                  </div>
+                )}
+                <div style={{ marginLeft:"auto", display:"flex", alignItems:"center", gap:7, background:"#2a060618", border:"1px solid #ef444440", borderRadius:20, padding:"4px 13px" }}>
+                  <span style={{ fontSize:7, color:"#ef4444", animation:"blink 1.4s infinite" }}>●</span>
+                  <span style={{ fontSize:10.5, fontWeight:700, color:"#ef4444", letterSpacing:1.5 }}>EN VIVO</span>
+                </div>
+                {active && (
+                  <button onClick={() => toggleFav(active.id)} style={{ background:"transparent", border:"none", cursor:"pointer", fontSize:18, color: favs.has(active.id) ? "#f59e0b" : "#2a3d52", transition:"color 0.15s" }}>★</button>
+                )}
+              </div>
+
+              <div style={{ flex:1, background:"#000", position:"relative", overflow:"hidden" }}>
+                {active
+                  ? <iframe key={active.id} src={active.url} style={{ width:"100%", height:"100%", border:"none", display:"block" }} allowFullScreen allow="autoplay; encrypted-media; fullscreen; picture-in-picture" referrerPolicy="no-referrer-when-downgrade" />
+                  : <div style={{ display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center", height:"100%", gap:12, color:"#1e2a3a" }}><div style={{ fontSize:48 }}>◉</div><div style={{ fontSize:14 }}>Selecciona un canal</div></div>
+                }
+              </div>
+
+              <div style={{ background:"#0b1018", borderTop:"1px solid #131e2c", padding:"8px 12px", display:"flex", gap:7, overflowX:"auto", flexShrink:0 }}>
+                {channels.map(c => {
+                  const isA = active?.id === c.id;
+                  return (
+                    <button key={c.id} onClick={() => setActive(c)} title={c.name} style={{
+                      flexShrink:0, width:54, height:40, borderRadius:8, cursor:"pointer",
+                      background: isA ? `${c.color}25` : "#101620",
+                      border:`1px solid ${isA ? c.color+"70" : "#1a2535"}`,
+                      display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center", gap:2, transition:"all 0.12s"
+                    }}>
+                      <div style={{ fontSize:8, fontWeight:800, color: isA ? c.color : "#36506a" }}>{c.num}</div>
+                      <div style={{ fontSize:7.5, color: isA ? "#8ab" : "#2a3d52", overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap", maxWidth:48, textAlign:"center" }}>{c.name.split(" ")[0]}</div>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
+          {showAdd && <AddModal onAdd={addChannel} onClose={() => setShowAdd(false)} />}
+        </>
+      );
+    }
+
+    ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+  </script>
 </body>
 </html>
