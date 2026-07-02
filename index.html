@@ -1,13 +1,13 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>CanalStream · TV en Vivo</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.2/babel.min.js"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
   <style>
     *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
     html,body,#root{height:100%;overflow:hidden;background:#080c12}
@@ -23,97 +23,90 @@
 <script type="text/babel">
 const { useState } = React;
 
-const E = s => `https://vileembeds.pages.dev/embed/${s}`;
-
-// ── 46 canales verificados desde timstreams.st ──────────────────
+// ── 46 canales verificados — URLs exactas de vileembeds ──────────
 const INITIAL_CHANNELS = [
   // BROADCAST
-  {id:1,  name:"ABC",                  cat:"Broadcast",  color:"#000000", slug:"abc"},
-  {id:2,  name:"CBS",                  cat:"Broadcast",  color:"#0033a0", slug:"cbs"},
-  {id:3,  name:"FOX",                  cat:"Broadcast",  color:"#003366", slug:"fox"},
-  {id:4,  name:"NBC",                  cat:"Broadcast",  color:"#f4b400", slug:"nbc"},
-  {id:5,  name:"Telemundo",            cat:"Broadcast",  color:"#cc0000", slug:"telemundo"},
+  {id:1,  name:"ABC",                 cat:"Broadcast",       color:"#000000", url:"https://vileembeds.pages.dev/embed/abc"},
+  {id:2,  name:"CBS",                 cat:"Broadcast",       color:"#0033a0", url:"https://vileembeds.pages.dev/embed/cbs"},
+  {id:3,  name:"FOX",                 cat:"Broadcast",       color:"#003366", url:"https://vileembeds.pages.dev/embed/fox"},
+  {id:4,  name:"NBC",                 cat:"Broadcast",       color:"#f4b400", url:"https://vileembeds.pages.dev/embed/nbc"},
+  {id:5,  name:"Telemundo",           cat:"Broadcast",       color:"#cc0000", url:"https://vileembeds.pages.dev/embed/telemundo"},
   // DEPORTES
-  {id:6,  name:"ESPN",                 cat:"Deportes",   color:"#cc0000", slug:"espn"},
-  {id:7,  name:"ESPN2",                cat:"Deportes",   color:"#cc0000", slug:"espn2"},
-  {id:8,  name:"ESPN Deportes",        cat:"Deportes",   color:"#cc0000", slug:"espn-deportes"},
-  {id:9,  name:"ESPNews",              cat:"Deportes",   color:"#cc0000", slug:"espnews"},
-  {id:10, name:"ESPNU",                cat:"Deportes",   color:"#cc0000", slug:"espnu"},
-  {id:11, name:"FS1",                  cat:"Deportes",   color:"#003087", slug:"fox-sports-1"},
-  {id:12, name:"FS2",                  cat:"Deportes",   color:"#003087", slug:"fox-sports-2"},
-  {id:13, name:"CBS Sports Network",   cat:"Deportes",   color:"#003087", slug:"cbs-sports-network"},
-  {id:14, name:"ACC Network",          cat:"Deportes",   color:"#002d62", slug:"acc-network"},
-  {id:15, name:"Golf Channel",         cat:"Deportes",   color:"#006341", slug:"golf-channel"},
-  {id:16, name:"Tennis Channel",       cat:"Deportes",   color:"#00843d", slug:"tennis-channel"},
-  {id:17, name:"TUDN",                 cat:"Deportes",   color:"#00529b", slug:"tudn"},
-  {id:18, name:"TyC Sports",          cat:"Deportes",   color:"#003087", slug:"tyc-sports-internacional"},
-  {id:19, name:"NBC Sports Bay Area",  cat:"Deportes",   color:"#f4b400", slug:"nbc-sports-bay-area"},
-  {id:20, name:"NBC Sports Philly",    cat:"Deportes",   color:"#f4b400", slug:"nbc-sports-philadelphia"},
-  {id:21, name:"Sky Sports F1",        cat:"Deportes",   color:"#e4002b", slug:"sky-sports-f1"},
-  {id:22, name:"DAZN 1",              cat:"Deportes",   color:"#f8ff00", slug:"dazn-1-usa"},
-  {id:23, name:"DAZN F1",             cat:"Deportes",   color:"#f8ff00", slug:"dazn-f1"},
-  {id:24, name:"TNT Sports 1",         cat:"Deportes",   color:"#0057b8", slug:"tnt-sports-1"},
-  {id:25, name:"TNT Sports 2",         cat:"Deportes",   color:"#0057b8", slug:"tnt-sports-2"},
-  {id:26, name:"TNT Sports 3",         cat:"Deportes",   color:"#0057b8", slug:"tnt-sports-3"},
-  {id:27, name:"TNT Sports 4",         cat:"Deportes",   color:"#0057b8", slug:"tnt-sports-4"},
+  {id:6,  name:"ESPN",                cat:"Deportes",        color:"#cc0000", url:"https://vileembeds.pages.dev/embed/espn"},
+  {id:7,  name:"ESPN2",               cat:"Deportes",        color:"#cc0000", url:"https://vileembeds.pages.dev/embed/espn2"},
+  {id:8,  name:"ESPN Deportes",       cat:"Deportes",        color:"#cc0000", url:"https://vileembeds.pages.dev/embed/espn-deportes"},
+  {id:9,  name:"ESPNews",             cat:"Deportes",        color:"#cc0000", url:"https://vileembeds.pages.dev/embed/espnews"},
+  {id:10, name:"ESPNU",               cat:"Deportes",        color:"#cc0000", url:"https://vileembeds.pages.dev/embed/espnu"},
+  {id:11, name:"FS1",                 cat:"Deportes",        color:"#003087", url:"https://vileembeds.pages.dev/embed/fox-sports-1"},
+  {id:12, name:"FS2",                 cat:"Deportes",        color:"#003087", url:"https://vileembeds.pages.dev/embed/fox-sports-2"},
+  {id:13, name:"CBS Sports",          cat:"Deportes",        color:"#003087", url:"https://vileembeds.pages.dev/embed/cbs-sports-network"},
+  {id:14, name:"ACC Network",         cat:"Deportes",        color:"#002d62", url:"https://vileembeds.pages.dev/embed/acc-network"},
+  {id:15, name:"Golf Channel",        cat:"Deportes",        color:"#006341", url:"https://vileembeds.pages.dev/embed/golf-channel"},
+  {id:16, name:"Tennis Channel",      cat:"Deportes",        color:"#00843d", url:"https://vileembeds.pages.dev/embed/tennis-channel"},
+  {id:17, name:"TUDN",                cat:"Deportes",        color:"#00529b", url:"https://vileembeds.pages.dev/embed/tudn"},
+  {id:18, name:"TyC Sports",          cat:"Deportes",        color:"#1a5276", url:"https://vileembeds.pages.dev/embed/tyc-sports-internacional"},
+  {id:19, name:"NBC Sports Bay Area", cat:"Deportes",        color:"#f4b400", url:"https://vileembeds.pages.dev/embed/nbc-sports-bay-area"},
+  {id:20, name:"NBC Sports Philly",   cat:"Deportes",        color:"#f4b400", url:"https://vileembeds.pages.dev/embed/nbc-sports-philadelphia"},
+  {id:21, name:"Sky Sports F1",       cat:"Deportes",        color:"#e4002b", url:"https://vileembeds.pages.dev/embed/sky-sports-f1"},
+  {id:22, name:"DAZN 1",              cat:"Deportes",        color:"#b8ff00", url:"https://vileembeds.pages.dev/embed/dazn-1-usa"},
+  {id:23, name:"DAZN F1",             cat:"Deportes",        color:"#b8ff00", url:"https://vileembeds.pages.dev/embed/dazn-f1"},
+  {id:24, name:"TNT Sports 1",        cat:"Deportes",        color:"#0057b8", url:"https://vileembeds.pages.dev/embed/tnt-sports-1"},
+  {id:25, name:"TNT Sports 2",        cat:"Deportes",        color:"#0057b8", url:"https://vileembeds.pages.dev/embed/tnt-sports-2"},
+  {id:26, name:"TNT Sports 3",        cat:"Deportes",        color:"#0057b8", url:"https://vileembeds.pages.dev/embed/tnt-sports-3"},
+  {id:27, name:"TNT Sports 4",        cat:"Deportes",        color:"#0057b8", url:"https://vileembeds.pages.dev/embed/tnt-sports-4"},
   // ENTRETENIMIENTO
-  {id:28, name:"TBS",                  cat:"Entretenimiento", color:"#00adef", slug:"tbs"},
-  {id:29, name:"TNT",                  cat:"Entretenimiento", color:"#00adef", slug:"tnt"},
-  {id:30, name:"AMC",                  cat:"Entretenimiento", color:"#555555", slug:"amc"},
-  {id:31, name:"USA Network",          cat:"Entretenimiento", color:"#0033a0", slug:"usa-network"},
-  {id:32, name:"Bravo",                cat:"Entretenimiento", color:"#9b59b6", slug:"bravo"},
-  {id:33, name:"A&E",                  cat:"Entretenimiento", color:"#3a3a6e", slug:"ae-network"},
-  {id:34, name:"BBC America",          cat:"Entretenimiento", color:"#c8102e", slug:"bbc-america"},
-  {id:35, name:"AXS TV",               cat:"Entretenimiento", color:"#e8000d", slug:"axs-tv"},
+  {id:28, name:"TBS",                 cat:"Entretenimiento", color:"#00adef", url:"https://vileembeds.pages.dev/embed/tbs"},
+  {id:29, name:"TNT",                 cat:"Entretenimiento", color:"#00adef", url:"https://vileembeds.pages.dev/embed/tnt"},
+  {id:30, name:"AMC",                 cat:"Entretenimiento", color:"#555555", url:"https://vileembeds.pages.dev/embed/amc"},
+  {id:31, name:"USA Network",         cat:"Entretenimiento", color:"#0033a0", url:"https://vileembeds.pages.dev/embed/usa-network"},
+  {id:32, name:"Bravo",               cat:"Entretenimiento", color:"#9b59b6", url:"https://vileembeds.pages.dev/embed/bravo"},
+  {id:33, name:"A&E",                 cat:"Entretenimiento", color:"#3a3a6e", url:"https://vileembeds.pages.dev/embed/ae-network"},
+  {id:34, name:"BBC America",         cat:"Entretenimiento", color:"#c8102e", url:"https://vileembeds.pages.dev/embed/bbc-america"},
+  {id:35, name:"AXS TV",              cat:"Entretenimiento", color:"#e8000d", url:"https://vileembeds.pages.dev/embed/axs-tv"},
   // DOCUMENTALES
-  {id:36, name:"AHC",                  cat:"Documentales",    color:"#8b0000", slug:"american-heroes-channel"},
-  {id:37, name:"Animal Planet",        cat:"Documentales",    color:"#76b900", slug:"animal-planet"},
+  {id:36, name:"AHC",                 cat:"Documentales",    color:"#8b0000", url:"https://vileembeds.pages.dev/embed/american-heroes-channel"},
+  {id:37, name:"Animal Planet",       cat:"Documentales",    color:"#76b900", url:"https://vileembeds.pages.dev/embed/animal-planet"},
   // FAMILIA
-  {id:38, name:"Disney Channel",       cat:"Familia",    color:"#006ab3", slug:"disney-channel"},
-  {id:39, name:"Disney Jr.",           cat:"Familia",    color:"#e40046", slug:"disney-junior"},
-  {id:40, name:"Disney XD",            cat:"Familia",    color:"#006ab3", slug:"disney-xd"},
-  {id:41, name:"Cartoon Network",      cat:"Familia",    color:"#333333", slug:"cartoon-network"},
-  {id:42, name:"Nickelodeon",          cat:"Familia",    color:"#ff6e00", slug:"nickelodeon"},
-  {id:43, name:"Nick Jr.",             cat:"Familia",    color:"#dd5500", slug:"nick-jr"},
-  {id:44, name:"Nicktoons",            cat:"Familia",    color:"#ff6e00", slug:"nicktoons"},
-  {id:45, name:"TeenNick",             cat:"Familia",    color:"#aa00ff", slug:"teenick"},
+  {id:38, name:"Disney Channel",      cat:"Familia",         color:"#006ab3", url:"https://vileembeds.pages.dev/embed/disney-channel"},
+  {id:39, name:"Disney Jr.",          cat:"Familia",         color:"#e40046", url:"https://vileembeds.pages.dev/embed/disney-junior"},
+  {id:40, name:"Disney XD",           cat:"Familia",         color:"#006ab3", url:"https://vileembeds.pages.dev/embed/disney-xd"},
+  {id:41, name:"Cartoon Network",     cat:"Familia",         color:"#333333", url:"https://vileembeds.pages.dev/embed/cartoon-network"},
+  {id:42, name:"Nickelodeon",         cat:"Familia",         color:"#ff6e00", url:"https://vileembeds.pages.dev/embed/nickelodeon"},
+  {id:43, name:"Nick Jr.",            cat:"Familia",         color:"#dd5500", url:"https://vileembeds.pages.dev/embed/nick-jr"},
+  {id:44, name:"Nicktoons",           cat:"Familia",         color:"#ff6e00", url:"https://vileembeds.pages.dev/embed/nicktoons"},
+  {id:45, name:"TeenNick",            cat:"Familia",         color:"#aa00ff", url:"https://vileembeds.pages.dev/embed/teenick"},
   // MÚSICA
-  {id:46, name:"MTV",                  cat:"Música",     color:"#c8c800", slug:"mtv"},
-].map(ch => ({ ...ch, num: String(ch.id).padStart(2,"0"), url: E(ch.slug) }));
+  {id:46, name:"MTV",                 cat:"Música",          color:"#c8c800", url:"https://vileembeds.pages.dev/embed/mtv"},
+].map(ch => ({ ...ch, num: String(ch.id).padStart(2,"0") }));
 
 const PALETTE = ["#c8102e","#f26622","#0057b8","#1f4ba5","#a855f7","#6d28d9","#1db954","#00b8d9","#ff6a00","#e30613","#0e7490","#be185d"];
 
 function AddModal({ onAdd, onClose, total }) {
-  const [form, setForm] = useState({ name:"", cat:"General", slug:"", color:PALETTE[0] });
-  const set = (k,v) => setForm(f => ({...f,[k]:v}));
+  const [form, setForm] = useState({ name:"", cat:"General", url:"", color:PALETTE[0] });
+  const set = (k,v) => setForm(f=>({...f,[k]:v}));
   const handleAdd = () => {
-    if (!form.name.trim() || !form.slug.trim()) return;
-    const id = Date.now();
-    onAdd({ ...form, id, num: String(total+1).padStart(2,"0"), url: E(form.slug.trim()) });
+    if (!form.name.trim() || !form.url.trim()) return;
+    onAdd({ ...form, id:Date.now(), num:String(total+1).padStart(2,"0") });
     onClose();
   };
   const inp = { width:"100%", background:"#0d1420", border:"1px solid #1e2a3a", borderRadius:8, padding:"9px 12px", color:"#c8d6e8", fontSize:13, outline:"none", boxSizing:"border-box" };
   const lbl = { fontSize:11, color:"#4a5a72", display:"block", marginBottom:5 };
   return (
-    <div onClick={onClose} style={{ position:"fixed", inset:0, background:"#000000bb", display:"flex", alignItems:"center", justifyContent:"center", zIndex:200 }}>
-      <div onClick={e=>e.stopPropagation()} style={{ background:"#0d1420", border:"1px solid #1e2a3a", borderRadius:14, padding:24, width:400, display:"flex", flexDirection:"column", gap:14 }}>
-        <div style={{ fontWeight:700, fontSize:15, color:"#e8f0ff" }}>+ Agregar canal</div>
+    <div onClick={onClose} style={{position:"fixed",inset:0,background:"#000000bb",display:"flex",alignItems:"center",justifyContent:"center",zIndex:200}}>
+      <div onClick={e=>e.stopPropagation()} style={{background:"#0d1420",border:"1px solid #1e2a3a",borderRadius:14,padding:24,width:400,display:"flex",flexDirection:"column",gap:14}}>
+        <div style={{fontWeight:700,fontSize:15,color:"#e8f0ff"}}>+ Agregar canal</div>
+        <div><label style={lbl}>Nombre</label><input style={inp} value={form.name} onChange={e=>set("name",e.target.value)} placeholder="ej. ESPN Deportes"/></div>
         <div>
-          <label style={lbl}>Nombre</label>
-          <input style={inp} value={form.name} onChange={e=>set("name",e.target.value)} placeholder="ej. ESPN Deportes" />
-        </div>
-        <div>
-          <label style={lbl}>Slug <span style={{color:"#00b8d9",fontSize:10}}>— de timstreams.st/channel/<b>[slug]</b></span></label>
-          <input style={inp} value={form.slug} onChange={e=>set("slug",e.target.value)} placeholder="ej. espn-deportes" />
-          {form.slug && <div style={{fontSize:10,color:"#2a3d52",marginTop:4}}>→ <span style={{color:"#00b8d9"}}>vileembeds.pages.dev/embed/{form.slug}</span></div>}
+          <label style={lbl}>URL embed <span style={{color:"#00b8d9",fontSize:10}}>vileembeds.pages.dev/embed/[slug]</span></label>
+          <input style={inp} value={form.url} onChange={e=>set("url",e.target.value)} placeholder="https://vileembeds.pages.dev/embed/slug"/>
         </div>
         <div style={{display:"flex",gap:10}}>
-          <div style={{flex:1}}><label style={lbl}>Categoría</label><input style={inp} value={form.cat} onChange={e=>set("cat",e.target.value)} placeholder="Deportes" /></div>
+          <div style={{flex:1}}><label style={lbl}>Categoría</label><input style={inp} value={form.cat} onChange={e=>set("cat",e.target.value)} placeholder="Deportes"/></div>
         </div>
         <div>
           <label style={lbl}>Color</label>
           <div style={{display:"flex",gap:6,flexWrap:"wrap"}}>
-            {PALETTE.map(col=><div key={col} onClick={()=>set("color",col)} style={{width:24,height:24,borderRadius:"50%",background:col,cursor:"pointer",outline:form.color===col?"2px solid #fff":"none",outlineOffset:2}} />)}
+            {PALETTE.map(col=><div key={col} onClick={()=>set("color",col)} style={{width:24,height:24,borderRadius:"50%",background:col,cursor:"pointer",outline:form.color===col?"2px solid #fff":"none",outlineOffset:2}}/>)}
           </div>
         </div>
         <div style={{display:"flex",gap:10,justifyContent:"flex-end"}}>
@@ -125,24 +118,7 @@ function AddModal({ onAdd, onClose, total }) {
   );
 }
 
-function EditSlugModal({ ch, onSave, onClose }) {
-  const [slug, setSlug] = useState(ch.slug);
-  return (
-    <div onClick={onClose} style={{position:"fixed",inset:0,background:"#000000bb",display:"flex",alignItems:"center",justifyContent:"center",zIndex:200}}>
-      <div onClick={e=>e.stopPropagation()} style={{background:"#0d1420",border:"1px solid #1e2a3a",borderRadius:14,padding:24,width:380,display:"flex",flexDirection:"column",gap:14}}>
-        <div style={{fontWeight:700,fontSize:15,color:"#e8f0ff"}}>✎ Editar slug — {ch.name}</div>
-        <input value={slug} onChange={e=>setSlug(e.target.value)} style={{width:"100%",background:"#0d1420",border:"1px solid #1e2a3a",borderRadius:8,padding:"9px 12px",color:"#c8d6e8",fontSize:13,outline:"none"}} />
-        {slug && <div style={{fontSize:10,color:"#2a3d52"}}>→ <span style={{color:"#00b8d9"}}>vileembeds.pages.dev/embed/{slug}</span></div>}
-        <div style={{display:"flex",gap:10,justifyContent:"flex-end"}}>
-          <button onClick={onClose} style={{padding:"8px 18px",borderRadius:8,border:"1px solid #1e2a3a",background:"transparent",color:"#4a5a72",cursor:"pointer",fontSize:13}}>Cancelar</button>
-          <button onClick={()=>onSave(slug.trim())} style={{padding:"8px 22px",borderRadius:8,border:"none",background:"#00b8d9",color:"#000",fontWeight:700,cursor:"pointer",fontSize:13}}>Guardar</button>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function ChannelCard({ ch, isActive, isFav, onClick, onFav, onEdit }) {
+function ChannelCard({ ch, isActive, isFav, onClick, onFav }) {
   return (
     <div onClick={onClick} style={{display:"flex",alignItems:"center",gap:10,padding:"8px 10px",borderRadius:8,cursor:"pointer",marginBottom:2,userSelect:"none",background:isActive?`${ch.color}18`:"transparent",borderLeft:`3px solid ${isActive?ch.color:"transparent"}`,transition:"all 0.12s"}}>
       <div style={{width:38,height:38,borderRadius:8,flexShrink:0,background:isActive?`${ch.color}30`:"#161d2b",border:`1px solid ${isActive?ch.color+"60":"#1e2a3a"}`,display:"flex",alignItems:"center",justifyContent:"center",fontSize:9,fontWeight:800,color:isActive?ch.color:"#4a5a72"}}>
@@ -150,11 +126,10 @@ function ChannelCard({ ch, isActive, isFav, onClick, onFav, onEdit }) {
       </div>
       <div style={{flex:1,minWidth:0}}>
         <div style={{fontSize:12.5,fontWeight:600,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap",color:isActive?"#e8f0ff":"#7a91ab"}}>{ch.name}</div>
-        <div style={{fontSize:9,color:"#2a3d52"}}>{ch.slug}</div>
+        <div style={{fontSize:9,color:"#2a3d52"}}>{ch.cat}</div>
       </div>
-      <div style={{display:"flex",alignItems:"center",gap:4}}>
+      <div style={{display:"flex",alignItems:"center",gap:5}}>
         {isActive && <span style={{fontSize:7,color:"#ef4444",animation:"blink 1.4s infinite"}}>●</span>}
-        <span onClick={e=>{e.stopPropagation();onEdit();}} title="Editar slug" style={{fontSize:11,opacity:0.25,cursor:"pointer"}}>✎</span>
         <span onClick={e=>{e.stopPropagation();onFav();}} style={{fontSize:13,opacity:isFav?1:0.2,cursor:"pointer"}}>★</span>
       </div>
     </div>
@@ -169,31 +144,24 @@ function App() {
   const [cat, setCat]           = useState("Todos");
   const [showFavs, setShowFavs] = useState(false);
   const [showAdd, setShowAdd]   = useState(false);
-  const [editing, setEditing]   = useState(null);
   const [sideOpen, setSideOpen] = useState(true);
 
   const cats = ["Todos",...new Set(channels.map(c=>c.cat))];
   const filtered = channels.filter(c => {
     if (showFavs && !favs.has(c.id)) return false;
     if (cat !== "Todos" && c.cat !== cat) return false;
-    if (query && !c.name.toLowerCase().includes(query.toLowerCase()) && !c.slug.includes(query.toLowerCase())) return false;
+    if (query && !c.name.toLowerCase().includes(query.toLowerCase())) return false;
     return true;
   });
-
   const toggleFav = id => setFavs(p=>{const n=new Set(p);n.has(id)?n.delete(id):n.add(id);return n;});
   const addChannel = ch => {setChannels(p=>[...p,ch]);setActive(ch);};
-  const saveSlug = (id,slug) => {
-    setChannels(p=>p.map(c=>c.id===id?{...c,slug,url:E(slug)}:c));
-    setActive(a=>a?.id===id?{...a,slug,url:E(slug)}:a);
-    setEditing(null);
-  };
 
   return (
     <>
       <div style={{display:"flex",height:"100vh",overflow:"hidden",background:"#080c12"}}>
 
         {sideOpen && (
-          <aside style={{width:272,background:"#0b1018",borderRight:"1px solid #131e2c",display:"flex",flexDirection:"column",overflow:"hidden",flexShrink:0}}>
+          <aside style={{width:268,background:"#0b1018",borderRight:"1px solid #131e2c",display:"flex",flexDirection:"column",overflow:"hidden",flexShrink:0}}>
             <div style={{padding:"18px 16px 14px",borderBottom:"1px solid #131e2c"}}>
               <div style={{fontFamily:"'Space Grotesk',sans-serif",fontWeight:800,fontSize:17,letterSpacing:"-0.5px"}}>
                 <span style={{color:"#00b8d9"}}>◉</span><span style={{color:"#e8f0ff",marginLeft:8}}>CanalStream</span>
@@ -203,7 +171,7 @@ function App() {
 
             <div style={{padding:"10px 12px 6px"}}>
               <input value={query} onChange={e=>setQuery(e.target.value)} placeholder="Buscar canal..."
-                style={{width:"100%",background:"#101620",border:"1px solid #1a2535",borderRadius:8,padding:"8px 12px",color:"#8aa6c0",fontSize:12,outline:"none"}} />
+                style={{width:"100%",background:"#101620",border:"1px solid #1a2535",borderRadius:8,padding:"8px 12px",color:"#8aa6c0",fontSize:12,outline:"none"}}/>
             </div>
 
             <div style={{padding:"4px 12px 8px",display:"flex",flexWrap:"wrap",gap:4}}>
@@ -219,7 +187,7 @@ function App() {
                 : filtered.map(ch=>(
                   <ChannelCard key={ch.id} ch={ch}
                     isActive={active?.id===ch.id} isFav={favs.has(ch.id)}
-                    onClick={()=>setActive(ch)} onFav={()=>toggleFav(ch.id)} onEdit={()=>setEditing(ch)} />
+                    onClick={()=>setActive(ch)} onFav={()=>toggleFav(ch.id)}/>
                 ))
               }
             </div>
@@ -249,16 +217,13 @@ function App() {
               <span style={{fontSize:10.5,fontWeight:700,color:"#ef4444",letterSpacing:1.5}}>EN VIVO</span>
             </div>
             {active && (
-              <>
-                <button onClick={()=>setEditing(active)} title="Editar slug" style={{background:"#101620",border:"1px solid #1a2535",borderRadius:7,color:"#4a6a80",cursor:"pointer",fontSize:13,padding:"5px 9px"}}>✎</button>
-                <button onClick={()=>toggleFav(active.id)} style={{background:"transparent",border:"none",cursor:"pointer",fontSize:18,color:favs.has(active.id)?"#f59e0b":"#2a3d52"}}>★</button>
-              </>
+              <button onClick={()=>toggleFav(active.id)} style={{background:"transparent",border:"none",cursor:"pointer",fontSize:18,color:favs.has(active.id)?"#f59e0b":"#2a3d52"}}>★</button>
             )}
           </div>
 
           <div style={{flex:1,background:"#000",overflow:"hidden"}}>
             {active
-              ? <iframe key={active.id} src={active.url} style={{width:"100%",height:"100%",border:"none",display:"block"}} allowFullScreen allow="autoplay;encrypted-media;fullscreen;picture-in-picture" referrerPolicy="no-referrer-when-downgrade" />
+              ? <iframe key={active.id} src={active.url} style={{width:"100%",height:"100%",border:"none",display:"block"}} allowFullScreen allow="autoplay;encrypted-media;fullscreen;picture-in-picture" referrerPolicy="no-referrer-when-downgrade"/>
               : <div style={{display:"flex",alignItems:"center",justifyContent:"center",height:"100%",color:"#1e2a3a",fontSize:48}}>◉</div>
             }
           </div>
@@ -276,14 +241,12 @@ function App() {
           </div>
         </div>
       </div>
-
-      {showAdd && <AddModal onAdd={addChannel} onClose={()=>setShowAdd(false)} total={channels.length} />}
-      {editing && <EditSlugModal ch={editing} onSave={slug=>saveSlug(editing.id,slug)} onClose={()=>setEditing(null)} />}
+      {showAdd && <AddModal onAdd={addChannel} onClose={()=>setShowAdd(false)} total={channels.length}/>}
     </>
   );
 }
 
-ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+ReactDOM.createRoot(document.getElementById("root")).render(<App/>);
 </script>
 </body>
 </html>
