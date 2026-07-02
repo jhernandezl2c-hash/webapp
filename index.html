@@ -26,73 +26,75 @@
   <script type="text/babel">
     const { useState } = React;
 
-    // ═══════════════════════════════════════════════════
-    //  CANALES — formato: https://vileembeds.pages.dev/embed/[canal]-usa
-    // ═══════════════════════════════════════════════════
-    const BASE = "https://vileembeds.pages.dev/embed";
-    const ch = (id, name, cat, color, slug) => ({
-      id, name, cat, num: String(id).padStart(2, "0"), color,
-      url: `${BASE}/${slug}-usa`
+    // ═══════════════════════════════════════════════════════
+    //  CANALES — URL completa de vileembeds por canal
+    //  Si un canal no da señal, ajusta el slug en su url
+    // ═══════════════════════════════════════════════════════
+    const V = "https://vileembeds.pages.dev/embed";
+    const c = (id, name, cat, color, slug) => ({
+      id, name, cat, color,
+      num: String(id).padStart(2,"0"),
+      url: `${V}/${slug}`
     });
 
     const INITIAL_CHANNELS = [
-      // NOTICIAS
-      ch(1,  "CNN",            "Noticias",        "#cc0000",  "cnn"),
-      ch(2,  "Fox News",       "Noticias",        "#003366",  "fox-news"),
-      ch(3,  "MSNBC",          "Noticias",        "#f37021",  "msnbc"),
-      ch(4,  "CNBC",           "Noticias",        "#009bde",  "cnbc"),
-      ch(5,  "Bloomberg",      "Noticias",        "#f26622",  "bloomberg"),
-      ch(6,  "HLN",            "Noticias",        "#e31837",  "hln"),
-      ch(7,  "Newsmax",        "Noticias",        "#1b4f8a",  "newsmax"),
-      ch(8,  "The Weather Ch", "Noticias",        "#0066cc",  "weather"),
-      // DEPORTES
-      ch(9,  "ESPN",           "Deportes",        "#cc0000",  "espn"),
-      ch(10, "ESPN2",          "Deportes",        "#cc0000",  "espn2"),
-      ch(11, "FS1",            "Deportes",        "#003087",  "fs1"),
-      ch(12, "FS2",            "Deportes",        "#003087",  "fs2"),
-      ch(13, "NFL Network",    "Deportes",        "#013369",  "nfl-network"),
-      ch(14, "NBA TV",         "Deportes",        "#17408b",  "nba-tv"),
-      ch(15, "MLB Network",    "Deportes",        "#002d72",  "mlb-network"),
-      ch(16, "Golf Channel",   "Deportes",        "#006341",  "golf"),
-      ch(17, "CBS Sports",     "Deportes",        "#003087",  "cbs-sports"),
-      ch(18, "TUDN",           "Deportes",        "#00529b",  "tudn"),
-      // ENTRETENIMIENTO
-      ch(19, "TBS",            "Entretenimiento", "#00adef",  "tbs"),
-      ch(20, "TNT",            "Entretenimiento", "#00adef",  "tnt"),
-      ch(21, "AMC",            "Entretenimiento", "#555555",  "amc"),
-      ch(22, "USA Network",    "Entretenimiento", "#0033a0",  "usa"),
-      ch(23, "FX",             "Entretenimiento", "#444444",  "fx"),
-      ch(24, "Bravo",          "Entretenimiento", "#9b59b6",  "bravo"),
-      ch(25, "Syfy",           "Entretenimiento", "#b8a000",  "syfy"),
-      ch(26, "A&E",            "Entretenimiento", "#3a3a6e",  "aande"),
-      ch(27, "Lifetime",       "Entretenimiento", "#c0392b",  "lifetime"),
-      ch(28, "Hallmark",       "Entretenimiento", "#9b2335",  "hallmark"),
-      // DOCUMENTALES
-      ch(29, "Discovery",      "Documentales",    "#0077c8",  "discovery"),
-      ch(30, "History",        "Documentales",    "#8b4513",  "history"),
-      ch(31, "Nat Geo",        "Documentales",    "#c8a800",  "nat-geo"),
-      ch(32, "AHC",            "Documentales",    "#8b0000",  "ahc"),
-      ch(33, "Animal Planet",  "Documentales",    "#76b900",  "animal-planet"),
-      ch(34, "Science Ch.",    "Documentales",    "#0077b6",  "science"),
-      ch(35, "Travel Channel", "Documentales",    "#e67e22",  "travel"),
-      ch(36, "Smithsonian",    "Documentales",    "#003087",  "smithsonian"),
-      // FAMILIA
-      ch(37, "Disney Channel", "Familia",         "#006ab3",  "disney"),
-      ch(38, "Disney Jr.",     "Familia",         "#e40046",  "disney-jr"),
-      ch(39, "Cartoon Network","Familia",          "#444444",  "cartoon-network"),
-      ch(40, "Nickelodeon",    "Familia",         "#ff6e00",  "nickelodeon"),
-      ch(41, "Nick Jr.",       "Familia",         "#dd5500",  "nick-jr"),
-      // ESTILO DE VIDA
-      ch(42, "HGTV",           "Estilo de Vida",  "#36a849",  "hgtv"),
-      ch(43, "Food Network",   "Estilo de Vida",  "#e83c1a",  "food"),
-      ch(44, "TLC",            "Estilo de Vida",  "#d41367",  "tlc"),
-      ch(45, "E! Network",     "Estilo de Vida",  "#555555",  "e"),
-      ch(46, "Oxygen",         "Estilo de Vida",  "#00a650",  "oxygen"),
-      // MÚSICA
-      ch(47, "MTV",            "Música",          "#c8c800",  "mtv"),
-      ch(48, "VH1",            "Música",          "#9b59b6",  "vh1"),
-      ch(49, "BET",            "Música",          "#444444",  "bet"),
-      ch(50, "CMT",            "Música",          "#003366",  "cmt"),
+      // ── NOTICIAS ────────────────────────────────────────
+      c(1,  "CNN",             "Noticias",        "#cc0000", "cnn-usa"),
+      c(2,  "Fox News",        "Noticias",        "#003366", "fox-news-usa"),
+      c(3,  "MSNBC",           "Noticias",        "#f37021", "msnbc-usa"),
+      c(4,  "CNBC",            "Noticias",        "#009bde", "cnbc-usa"),
+      c(5,  "Bloomberg",       "Noticias",        "#f26622", "bloomberg-television-usa"),
+      c(6,  "HLN",             "Noticias",        "#e31837", "hln-usa"),
+      c(7,  "Newsmax",         "Noticias",        "#1b4f8a", "newsmax-usa"),
+      c(8,  "Weather Channel", "Noticias",        "#0066cc", "weather-channel-usa"),
+      // ── DEPORTES ────────────────────────────────────────
+      c(9,  "ESPN",            "Deportes",        "#cc0000", "espn-usa"),
+      c(10, "ESPN2",           "Deportes",        "#cc0000", "espn-2-usa"),
+      c(11, "FS1",             "Deportes",        "#003087", "fox-sports-1"),      // sin -usa (confirmado)
+      c(12, "FS2",             "Deportes",        "#003087", "fox-sports-2"),
+      c(13, "NFL Network",     "Deportes",        "#013369", "nfl-network-usa"),
+      c(14, "NBA TV",          "Deportes",        "#17408b", "nba-tv-usa"),
+      c(15, "MLB Network",     "Deportes",        "#002d72", "mlb-network-usa"),
+      c(16, "Golf Channel",    "Deportes",        "#006341", "golf-channel-usa"),
+      c(17, "CBS Sports",      "Deportes",        "#003087", "cbs-sports-network-usa"),
+      c(18, "TUDN",            "Deportes",        "#00529b", "tudn-usa"),
+      // ── ENTRETENIMIENTO ─────────────────────────────────
+      c(19, "TBS",             "Entretenimiento", "#00adef", "tbs-usa"),
+      c(20, "TNT",             "Entretenimiento", "#00adef", "tnt-usa"),
+      c(21, "AMC",             "Entretenimiento", "#555555", "amc-usa"),
+      c(22, "USA Network",     "Entretenimiento", "#0033a0", "usa-network-usa"),
+      c(23, "FX",              "Entretenimiento", "#444444", "fx-usa"),
+      c(24, "Bravo",           "Entretenimiento", "#9b59b6", "bravo-usa"),
+      c(25, "Syfy",            "Entretenimiento", "#b8a000", "syfy-usa"),
+      c(26, "A&E",             "Entretenimiento", "#3a3a6e", "ae-usa"),
+      c(27, "Lifetime",        "Entretenimiento", "#c0392b", "lifetime-usa"),
+      c(28, "Hallmark",        "Entretenimiento", "#9b2335", "hallmark-channel-usa"),
+      // ── DOCUMENTALES ────────────────────────────────────
+      c(29, "Discovery",       "Documentales",    "#0077c8", "discovery-channel-usa"),
+      c(30, "History",         "Documentales",    "#8b4513", "history-channel-usa"),
+      c(31, "Nat Geo",         "Documentales",    "#c8a800", "national-geographic-usa"),
+      c(32, "AHC",             "Documentales",    "#8b0000", "ahc-usa"),           // confirmado
+      c(33, "Animal Planet",   "Documentales",    "#76b900", "animal-planet-usa"),
+      c(34, "Science Ch.",     "Documentales",    "#0077b6", "science-channel-usa"),
+      c(35, "Travel Channel",  "Documentales",    "#e67e22", "travel-channel-usa"),
+      c(36, "Smithsonian",     "Documentales",    "#003087", "smithsonian-channel-usa"),
+      // ── FAMILIA ─────────────────────────────────────────
+      c(37, "Disney Channel",  "Familia",         "#006ab3", "disney-channel-usa"),
+      c(38, "Disney Jr.",      "Familia",         "#e40046", "disney-junior-usa"),
+      c(39, "Cartoon Network", "Familia",         "#444444", "cartoon-network-usa"),
+      c(40, "Nickelodeon",     "Familia",         "#ff6e00", "nickelodeon-usa"),
+      c(41, "Nick Jr.",        "Familia",         "#dd5500", "nick-jr-usa"),
+      // ── ESTILO DE VIDA ──────────────────────────────────
+      c(42, "HGTV",            "Estilo de Vida",  "#36a849", "hgtv-usa"),
+      c(43, "Food Network",    "Estilo de Vida",  "#e83c1a", "food-network-usa"),
+      c(44, "TLC",             "Estilo de Vida",  "#d41367", "tlc-usa"),
+      c(45, "E! Network",      "Estilo de Vida",  "#555555", "e-entertainment-usa"),
+      c(46, "Oxygen",          "Estilo de Vida",  "#00a650", "oxygen-usa"),
+      // ── MÚSICA ──────────────────────────────────────────
+      c(47, "MTV",             "Música",          "#c8c800", "mtv-usa"),
+      c(48, "VH1",             "Música",          "#9b59b6", "vh1-usa"),
+      c(49, "BET",             "Música",          "#444444", "bet-usa"),
+      c(50, "CMT",             "Música",          "#003366", "cmt-usa"),
     ];
 
     const PALETTE = ["#c8102e","#f26622","#0057b8","#1f4ba5","#a855f7","#6d28d9","#1db954","#00b8d9","#ff6a00","#e30613","#0e7490","#be185d"];
@@ -165,7 +167,7 @@
               <label style={lbl}>URL del stream</label>
               <input style={inp} value={form.url} onChange={e => set("url", e.target.value)} placeholder="https://vileembeds.pages.dev/embed/canal-usa" />
               <div style={{ fontSize:10, color:"#2a3d52", marginTop:5 }}>
-                Formato: <span style={{ color:"#00b8d9" }}>https://vileembeds.pages.dev/embed/[canal]-usa</span>
+                Formato: <span style={{ color:"#00b8d9" }}>https://vileembeds.pages.dev/embed/[slug]-usa</span>
               </div>
             </div>
             <div style={{ display:"flex", gap:10 }}>
@@ -177,8 +179,8 @@
             <div>
               <label style={lbl}>Color del canal</label>
               <div style={{ display:"flex", gap:7, flexWrap:"wrap" }}>
-                {PALETTE.map(c => (
-                  <div key={c} onClick={() => set("color", c)} style={{ width:24, height:24, borderRadius:"50%", background:c, cursor:"pointer", outline: form.color === c ? "2px solid #fff" : "none", outlineOffset:2, flexShrink:0 }} />
+                {PALETTE.map(col => (
+                  <div key={col} onClick={() => set("color", col)} style={{ width:24, height:24, borderRadius:"50%", background:col, cursor:"pointer", outline: form.color === col ? "2px solid #fff" : "none", outlineOffset:2, flexShrink:0 }} />
                 ))}
               </div>
             </div>
@@ -201,20 +203,19 @@
       const [showAdd, setShowAdd]   = useState(false);
       const [sideOpen, setSideOpen] = useState(true);
 
-      const cats = ["Todos", ...new Set(channels.map(c => c.cat))];
-      const filtered = channels.filter(c => {
-        if (showFavs && !favs.has(c.id)) return false;
-        if (cat !== "Todos" && c.cat !== cat) return false;
-        if (query && !c.name.toLowerCase().includes(query.toLowerCase())) return false;
+      const cats = ["Todos", ...new Set(channels.map(ch => ch.cat))];
+      const filtered = channels.filter(ch => {
+        if (showFavs && !favs.has(ch.id)) return false;
+        if (cat !== "Todos" && ch.cat !== cat) return false;
+        if (query && !ch.name.toLowerCase().includes(query.toLowerCase())) return false;
         return true;
       });
       const toggleFav = id => setFavs(prev => { const n = new Set(prev); n.has(id) ? n.delete(id) : n.add(id); return n; });
-      const addChannel = c => { setChannels(prev => [...prev, c]); setActive(c); };
+      const addChannel = ch => { setChannels(prev => [...prev, ch]); setActive(ch); };
 
       return (
         <>
           <div style={{ display:"flex", height:"100vh", overflow:"hidden", background:"#080c12" }}>
-
             {sideOpen && (
               <aside style={{ width:268, background:"#0b1018", borderRight:"1px solid #131e2c", display:"flex", flexDirection:"column", overflow:"hidden", flexShrink:0 }}>
                 <div style={{ padding:"18px 16px 14px", borderBottom:"1px solid #131e2c" }}>
@@ -224,20 +225,18 @@
                   </div>
                   <div style={{ fontSize:10.5, color:"#2a3d52", marginTop:3 }}>{channels.length} canales · en vivo</div>
                 </div>
-
                 <div style={{ padding:"12px 12px 8px" }}>
                   <input value={query} onChange={e => setQuery(e.target.value)} placeholder="Buscar canal..."
                     style={{ width:"100%", background:"#101620", border:"1px solid #1a2535", borderRadius:8, padding:"8px 12px", color:"#8aa6c0", fontSize:12.5, outline:"none" }} />
                 </div>
-
                 <div style={{ padding:"4px 12px 10px", display:"flex", flexWrap:"wrap", gap:5 }}>
-                  {cats.map(c => (
-                    <button key={c} onClick={() => { setCat(c); setShowFavs(false); }} style={{
+                  {cats.map(ct => (
+                    <button key={ct} onClick={() => { setCat(ct); setShowFavs(false); }} style={{
                       padding:"4px 10px", borderRadius:20, border:"none", cursor:"pointer", fontSize:10.5, fontWeight:600, transition:"all 0.12s",
-                      background: !showFavs && cat === c ? "#00b8d920" : "#101620",
-                      color: !showFavs && cat === c ? "#00b8d9" : "#36506a",
-                      outline: !showFavs && cat === c ? "1px solid #00b8d940" : "none"
-                    }}>{c}</button>
+                      background: !showFavs && cat === ct ? "#00b8d920" : "#101620",
+                      color: !showFavs && cat === ct ? "#00b8d9" : "#36506a",
+                      outline: !showFavs && cat === ct ? "1px solid #00b8d940" : "none"
+                    }}>{ct}</button>
                   ))}
                   <button onClick={() => { setShowFavs(!showFavs); setCat("Todos"); }} style={{
                     padding:"4px 10px", borderRadius:20, border:"none", cursor:"pointer", fontSize:10.5, fontWeight:600, transition:"all 0.12s",
@@ -246,18 +245,16 @@
                     outline: showFavs ? "1px solid #f59e0b40" : "none"
                   }}>★ Favoritos</button>
                 </div>
-
                 <div style={{ flex:1, overflowY:"auto", padding:"0 8px 8px" }}>
                   {filtered.length === 0
                     ? <div style={{ textAlign:"center", color:"#2a3d52", padding:"36px 20px", fontSize:12 }}>Sin canales disponibles</div>
-                    : filtered.map(c => (
-                      <ChannelCard key={c.id} ch={c}
-                        isActive={active?.id === c.id} isFav={favs.has(c.id)}
-                        onClick={() => setActive(c)} onFav={() => toggleFav(c.id)} />
+                    : filtered.map(ch => (
+                      <ChannelCard key={ch.id} ch={ch}
+                        isActive={active?.id === ch.id} isFav={favs.has(ch.id)}
+                        onClick={() => setActive(ch)} onFav={() => toggleFav(ch.id)} />
                     ))
                   }
                 </div>
-
                 <div style={{ padding:"10px 12px", borderTop:"1px solid #131e2c" }}>
                   <button onClick={() => setShowAdd(true)} style={{ width:"100%", padding:"9px", borderRadius:8, cursor:"pointer", background:"#00b8d915", border:"1px solid #00b8d940", color:"#00b8d9", fontWeight:600, fontSize:12.5 }}>
                     + Agregar canal
@@ -267,7 +264,6 @@
             )}
 
             <div style={{ flex:1, display:"flex", flexDirection:"column", overflow:"hidden", minWidth:0 }}>
-
               <div style={{ background:"#0b1018", borderBottom:"1px solid #131e2c", padding:"10px 18px", display:"flex", alignItems:"center", gap:12, flexShrink:0 }}>
                 <button onClick={() => setSideOpen(!sideOpen)} style={{ background:"#101620", border:"1px solid #1a2535", borderRadius:7, color:"#4a6a80", cursor:"pointer", fontSize:14, padding:"5px 9px" }}>☰</button>
                 {active && (
@@ -296,17 +292,17 @@
               </div>
 
               <div style={{ background:"#0b1018", borderTop:"1px solid #131e2c", padding:"8px 12px", display:"flex", gap:7, overflowX:"auto", flexShrink:0 }}>
-                {channels.map(c => {
-                  const isA = active?.id === c.id;
+                {channels.map(ch => {
+                  const isA = active?.id === ch.id;
                   return (
-                    <button key={c.id} onClick={() => setActive(c)} title={c.name} style={{
+                    <button key={ch.id} onClick={() => setActive(ch)} title={ch.name} style={{
                       flexShrink:0, width:54, height:40, borderRadius:8, cursor:"pointer",
-                      background: isA ? `${c.color}25` : "#101620",
-                      border:`1px solid ${isA ? c.color+"70" : "#1a2535"}`,
+                      background: isA ? `${ch.color}25` : "#101620",
+                      border:`1px solid ${isA ? ch.color+"70" : "#1a2535"}`,
                       display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center", gap:2, transition:"all 0.12s"
                     }}>
-                      <div style={{ fontSize:8, fontWeight:800, color: isA ? c.color : "#36506a" }}>{c.num}</div>
-                      <div style={{ fontSize:7.5, color: isA ? "#8ab" : "#2a3d52", overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap", maxWidth:48, textAlign:"center" }}>{c.name.split(" ")[0]}</div>
+                      <div style={{ fontSize:8, fontWeight:800, color: isA ? ch.color : "#36506a" }}>{ch.num}</div>
+                      <div style={{ fontSize:7.5, color: isA ? "#8ab" : "#2a3d52", overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap", maxWidth:48, textAlign:"center" }}>{ch.name.split(" ")[0]}</div>
                     </button>
                   );
                 })}
